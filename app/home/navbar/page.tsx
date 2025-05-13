@@ -8,10 +8,10 @@ const Navbar1Data = {
       title: "beautylook.top",
     },
     menu: [
-      { title: "HOME", url: "#" },
+      { title: "HOME", url: "/" },
       {
         title: "PRODUCTS",
-        url: "#",
+        url: "/product",
       },
       {
         title: "FAQ",

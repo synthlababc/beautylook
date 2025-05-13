@@ -19,7 +19,7 @@ const handler = NextAuth({
   callbacks: {
     async signIn({ user, account, profile }) {
       // 登录成功时的回调
-      console.log("登录成功:", user.email)
+      console.log("登录成功:", user.email, account, profile)
       return true // 返回true允许登录
     },
     async redirect({ url, baseUrl }) {

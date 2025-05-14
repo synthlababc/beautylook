@@ -36,7 +36,7 @@ export default function LoginPage() {
               <Button 
                 variant="outline" 
                 className="w-full" 
-                onClick={() => signIn('google', { redirectTo: '/user'})}
+                onClick={() => signIn('google', { callbackUrl: '/user' })}
               >
                 <FcGoogle className="mr-2 size-5" />
                 {pageContent.googleText}

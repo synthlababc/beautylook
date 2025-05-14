@@ -19,10 +19,12 @@ const handler = NextAuth({
     async session({ session, token }) {
       if (token && session.user) {
         // 扩展 session.user 类型以包含 id 属性
-        (session.user as any) = {
-          ...session.user,
-          id: token.sub
-        };
+        if (token.sub) {
+            session.user = {
+              ...session.user,
+              id: token.sub,
+            };
+          }
       }
       return session;
     },
@@ -39,7 +41,7 @@ const handler = NextAuth({
       }
       return token;
     },
-    async signIn({ account, profile }) {
+    async signIn({ account }) {
       console.log('OAuth请求目标URL:', account?.authorization_url);
       return true;
     }

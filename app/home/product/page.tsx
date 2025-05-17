@@ -1,6 +1,8 @@
 'use client'
 import ProductCard_02 from "@/components/commerce-ui/product-card-02"
 import ProductCard_04 from "@/components/commerce-ui/product-card-04"
+import { Button } from "@/components/ui/button"
+import Link from "next/link"
 
 export default function Product() {
     const DEFAULT_IMAGE_URL = "https://raw.githubusercontent.com/stackzero-labs/ui/refs/heads/main/public/placeholders/speaker-01.jpg";
@@ -131,6 +133,12 @@ export default function Product() {
                     {products04.map((product, index) => (
                         <ProductCard_04 key={index} {...product} />
                     ))}
+                </div>
+
+                <div className="flex justify-center mt-8">
+                    <Link href="/product">
+                        <Button variant="default" size="lg">View All Products</Button>
+                    </Link>
                 </div>
             </div>
         </div>

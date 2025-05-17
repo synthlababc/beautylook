@@ -26,8 +26,8 @@ function ProductCard_04({
   currencyPrefix = "$",
   imageUrl = DEFAULT_IMAGE_URL,
   maxRating = 5,
-  onAddToCart = () => {},
-  onBuyNow = () => {},
+  onAddToCart = () => { },
+  onBuyNow = () => { },
   originalPrice = 299,
   productName = "Smart Watch Pro",
   rating = 4.5,
@@ -40,19 +40,19 @@ function ProductCard_04({
       {/* Gradient badge  */}
       {tagText && (
         <div className="absolute top-3 left-3 z-10">
-          <span className="relative inline-block rounded-full bg-gradient-to-r from-indigo-500 to-indigo-700 px-3 py-1.5 text-xs font-semibold text-white">
+          <span className="relative inline-block rounded-full bg-primary px-3 py-1.5 text-xs font-semibold text-primary-foreground">
             {tagText}
             <span className="absolute -top-1 -right-1 flex h-3 w-3">
-              <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-indigo-400 opacity-75"></span>
-              <span className="relative inline-flex h-3 w-3 rounded-full bg-indigo-500"></span>
+              <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-primary opacity-75"></span>
+              <span className="relative inline-flex h-3 w-3 rounded-full bg-primary"></span>
             </span>
           </span>
         </div>
       )}
 
       {/* Image container with background glow effect */}
-      <div className="relative overflow-hidden bg-gradient-to-br from-indigo-50 to-purple-50 p-6 dark:from-indigo-950/30 dark:to-purple-950/30">
-        <div className="absolute -bottom-10 left-1/2 h-40 w-40 -translate-x-1/2 transform rounded-full bg-indigo-500/20 blur-3xl"></div>
+      <div className="relative overflow-hidden bg-accent p-6 dark:bg-accent/30">
+        <div className="absolute -bottom-10 left-1/2 h-40 w-40 -translate-x-1/2 transform rounded-full bg-primary/20 blur-3xl"></div>
         <div className="transition-transform duration-500 group-hover:scale-105">
           <ImageViewer
             imageUrl={imageUrl}
@@ -91,7 +91,7 @@ function ProductCard_04({
             salePrice={salePrice}
             showSavePercentage
             className="text-lg font-semibold text-gray-600 dark:text-gray-300"
-            classNameSalePrice="text-2xl font-bold text-indigo-600 dark:text-indigo-400"
+            classNameSalePrice="text-2xl font-bold text-primary dark:text-primary"
           />
           <p className="mt-1 inline-flex items-center text-sm text-green-600 dark:text-green-400">
             <svg
@@ -119,7 +119,7 @@ function ProductCard_04({
           </Button>
           <Button
             onClick={onBuyNow}
-            className="w-full bg-gradient-to-r from-indigo-600 to-purple-600 text-white transition-all hover:from-indigo-700 hover:to-purple-700"
+            className="w-full bg-primary text-primary-foreground transition-all hover:bg-primary/90"
           >
             Buy now
           </Button>

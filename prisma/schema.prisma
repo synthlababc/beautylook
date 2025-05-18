@@ -76,6 +76,7 @@ model Product {
   currency    Currency      @default(CNY)
   status      ProductStatus @default(NORMAL)
   image       String
+  detail      String // 新增：商品详细介绍，是富文本格式
   createdAt   DateTime      @default(now())
   updatedAt   DateTime      @updatedAt
   category    Category      @relation(fields: [categoryId], references: [id])

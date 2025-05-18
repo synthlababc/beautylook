@@ -6,17 +6,31 @@ import { Button } from "@/components/ui/button"
 import Link from "next/link"
 
 type Product = {
-    id: string;
+    id: number;  // 改为 number 以匹配 API
     name: string;
     description: string;
     price: number;
     image: string;
-    status: 'HOT' | 'NEW' | 'REGULAR';
+    status: 'NEW' | 'HOT' | 'NORMAL';  // 与 API 一致
     rating?: number;
     reviewCount?: number;
+    category?: {
+        id: number;
+        name: string;
+    };
 };
 
-export default function Product() {
+type ApiResponse = {
+    data: Product[];
+    meta: {
+        total: number;
+        page: number;
+        limit: number;
+        totalPages: number;
+    };
+};
+
+export default function ProductPage() {
     const [hotProducts, setHotProducts] = useState<Product[]>([])
     const [newProducts, setNewProducts] = useState<Product[]>([])
     const [loading, setLoading] = useState(true)
@@ -25,15 +39,18 @@ export default function Product() {
     useEffect(() => {
         const fetchProducts = async () => {
             try {
-                const response = await fetch('/api/products')
-                if (!response.ok) {
-                    throw new Error('Failed to fetch products')
-                }
-                const data: Product[] = await response.json()
+                // 获取热门产品
+                const hotResponse = await fetch('/api/products?status=HOT&limit=3')
+                if (!hotResponse.ok) throw new Error('Failed to fetch hot products')
+                const hotData: ApiResponse = await hotResponse.json()
 
-                // Filter products by status
-                setHotProducts(data.filter(p => p.status === 'HOT'))
-                setNewProducts(data.filter(p => p.status === 'NEW'))
+                // 获取新产品
+                const newResponse = await fetch('/api/products?status=NEW&limit=6')
+                if (!newResponse.ok) throw new Error('Failed to fetch new products')
+                const newData: ApiResponse = await newResponse.json()
+
+                setHotProducts(hotData.data)
+                setNewProducts(newData.data)
             } catch (err) {
                 setError(err instanceof Error ? err.message : 'An unknown error occurred')
             } finally {
@@ -52,8 +69,8 @@ export default function Product() {
             {/* Hot Products Section */}
             <div className="mb-12">
                 <h2 className="text-2xl font-bold text-center mb-6">Popular Products</h2>
-                <div className="flex justify-center"> {/* 新增 flex 容器 */}
-                    <div className="grid grid-cols-1 gap-6 max-w-4xl"> {/* 限制最大宽度 */}
+                <div className="flex justify-center">
+                    <div className="grid grid-cols-1 gap-6 max-w-4xl">
                         {hotProducts.map((product) => (
                             <ProductCard_02
                                 key={product.id}
@@ -68,6 +85,7 @@ export default function Product() {
                     </div>
                 </div>
             </div>
+
             {/* New Products Section */}
             <div className="mb-12">
                 <h2 className="text-2xl font-bold text-center mb-6">New Products</h2>
@@ -77,22 +95,22 @@ export default function Product() {
                             key={product.id}
                             productName={product.name}
                             imageUrl={product.image}
-                            originalPrice={product.price} // 假设原价
-                            salePrice={product.price * 0.9} // 假设折扣价（90% 原价）
+                            originalPrice={product.price}
+                            salePrice={product.price * 0.9}
                             rating={product.rating || 4.5}
                             reviewCount={product.reviewCount || 100}
-                            tagText="NEW" // 可选：显示标签
-                            currencyPrefix="$" // 货币符号
-                            maxRating={5} // 最大评分（默认5星）
-                            onAddToCart={() => console.log("Add to cart:", product.id)} // 加入购物车回调
-                            onBuyNow={() => console.log("Buy now:", product.id)} // 立即购买回调
+                            tagText={product.status === 'NEW' ? 'NEW' : product.status === 'HOT' ? 'HOT' : ''}
+                            currencyPrefix="$"
+                            maxRating={5}
+                            onAddToCart={() => console.log("Add to cart:", product.id)}
+                            onBuyNow={() => console.log("Buy now:", product.id)}
                         />
                     ))}
                 </div>
             </div>
 
             <div className="flex justify-center mt-8">
-                <Link href="/product">
+                <Link href="/products/all">
                     <Button variant="default" size="lg">View All Products</Button>
                 </Link>
             </div>

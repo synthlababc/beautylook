@@ -1,4 +1,8 @@
+"use client";
+
 import { Book, Menu, Sunset, Trees, Zap } from "lucide-react";
+import { useRouter } from "next/navigation";
+import { useSession, signOut } from "next-auth/react";
 
 import {
   Accordion,
@@ -22,6 +26,15 @@ import {
   SheetTitle,
   SheetTrigger,
 } from "@/components/ui/sheet";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuLabel,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
+import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
 
 interface MenuItem {
   title: string;
@@ -135,6 +148,13 @@ const Navbar1 = ({
     signup: { title: "Sign up", url: "#" },
   },
 }: Navbar1Props) => {
+  const router = useRouter();
+  const { data: session, status } = useSession();
+
+  if (status === "loading") {
+    return null; // 可选：显示加载状态
+  }
+
   return (
     <section className="py-4">
       <div className="container">
@@ -156,14 +176,62 @@ const Navbar1 = ({
               </NavigationMenu>
             </div>
           </div>
-          <div className="flex gap-2">
-            <Button asChild variant="outline" size="sm">
-              <a href={auth.login.url}>{auth.login.title}</a>
-            </Button>
-            <Button asChild size="sm">
-              <a href={auth.signup.url}>{auth.signup.title}</a>
-            </Button>
-          </div>
+
+          {/* 登录状态判断 */}
+          {session ? (
+            <DropdownMenu>
+              <DropdownMenuTrigger asChild>
+                <Button variant="ghost" className="relative h-8 w-8 rounded-full">
+                  <Avatar className="h-10 w-10">
+                    <AvatarImage
+                      src={session.user?.image || undefined}
+                      alt={session.user?.name || "User"}
+                    />
+                    <AvatarFallback>
+                      {session.user?.name?.charAt(0) || "U"}
+                    </AvatarFallback>
+                  </Avatar>
+                </Button>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent align="end">
+                <DropdownMenuLabel className="font-normal">
+                  <p className="text-sm font-medium">{session.user?.name}</p>
+                  <p className="text-xs text-muted-foreground">
+                    {session.user?.email}
+                  </p>
+                </DropdownMenuLabel>
+                <DropdownMenuSeparator />
+                <DropdownMenuItem
+                  onClick={() => router.push("/user")}
+                  className="cursor-pointer"
+                >
+                  Profile
+                </DropdownMenuItem>
+                <DropdownMenuItem
+                  onClick={() => router.push("/user")}
+                  className="cursor-pointer"
+                >
+                  Orders
+                </DropdownMenuItem>
+                <DropdownMenuSeparator />
+                <DropdownMenuItem
+                  onClick={() => signOut({ callbackUrl: "/" })}
+                  className="cursor-pointer text-red-600 focus:text-red-600"
+                >
+                  Sign out
+                </DropdownMenuItem>
+              </DropdownMenuContent>
+            </DropdownMenu>
+          ) : (
+            <div className="flex gap-2">
+              <Button asChild variant="outline" size="sm">
+                <a href={auth.login.url}>{auth.login.title}</a>
+              </Button>
+              <Button asChild size="sm">
+                <a href={auth.signup.url}>{auth.signup.title}</a>
+              </Button>
+            </div>
+          )}
         </nav>
 
         {/* Mobile Menu */}
@@ -173,40 +241,90 @@ const Navbar1 = ({
             <a href={logo.url} className="flex items-center gap-2">
               <img src={logo.src} className="max-h-8" alt={logo.alt} />
             </a>
-            <Sheet>
-              <SheetTrigger asChild>
-                <Button variant="outline" size="icon">
-                  <Menu className="size-4" />
-                </Button>
-              </SheetTrigger>
-              <SheetContent className="overflow-y-auto">
-                <SheetHeader>
-                  <SheetTitle>
-                    <a href={logo.url} className="flex items-center gap-2">
-                      <img src={logo.src} className="max-h-8" alt={logo.alt} />
-                    </a>
-                  </SheetTitle>
-                </SheetHeader>
-                <div className="flex flex-col gap-6 p-4">
-                  <Accordion
-                    type="single"
-                    collapsible
-                    className="flex w-full flex-col gap-4"
-                  >
-                    {menu.map((item) => renderMobileMenuItem(item))}
-                  </Accordion>
+            <div className="flex items-center gap-2">
+              {session && (
+                <DropdownMenu>
+                  <DropdownMenuTrigger asChild>
+                    <Button variant="ghost" className="relative h-8 w-8 rounded-full">
+                      <Avatar className="h-10 w-10">
+                        <AvatarImage
+                          src={session.user?.image || undefined}
+                          alt={session.user?.name || "User"}
+                        />
+                        <AvatarFallback>
+                          {session.user?.name?.charAt(0) || "U"}
+                        </AvatarFallback>
+                      </Avatar>
+                    </Button>
+                  </DropdownMenuTrigger>
+                  <DropdownMenuContent align="end">
+                    <DropdownMenuLabel className="font-normal">
+                      <p className="text-sm font-medium">{session.user?.name}</p>
+                      <p className="text-xs text-muted-foreground">
+                        {session.user?.email}
+                      </p>
+                    </DropdownMenuLabel>
+                    <DropdownMenuSeparator />
+                    <DropdownMenuItem
+                      onClick={() => router.push("/user")}
+                      className="cursor-pointer"
+                    >
+                      Profile
+                    </DropdownMenuItem>
+                    <DropdownMenuItem
+                      onClick={() => router.push("/user")}
+                      className="cursor-pointer"
+                    >
+                      Orders
+                    </DropdownMenuItem>
+                    <DropdownMenuSeparator />
+                    <DropdownMenuItem
+                      onClick={() => signOut({ callbackUrl: "/" })}
+                      className="cursor-pointer text-red-600 focus:text-red-600"
+                    >
+                      Sign out
+                    </DropdownMenuItem>
+                  </DropdownMenuContent>
+                </DropdownMenu>
+              )}
+              <Sheet>
+                <SheetTrigger asChild>
+                  <Button variant="outline" size="icon">
+                    <Menu className="size-4" />
+                  </Button>
+                </SheetTrigger>
+                <SheetContent className="overflow-y-auto">
+                  <SheetHeader>
+                    <SheetTitle>
+                      <a href={logo.url} className="flex items-center gap-2">
+                        <img src={logo.src} className="max-h-8" alt={logo.alt} />
+                      </a>
+                    </SheetTitle>
+                  </SheetHeader>
+                  <div className="flex flex-col gap-6 p-4">
+                    <Accordion
+                      type="single"
+                      collapsible
+                      className="flex w-full flex-col gap-4"
+                    >
+                      {menu.map((item) => renderMobileMenuItem(item))}
+                    </Accordion>
 
-                  <div className="flex flex-col gap-3">
-                    <Button asChild variant="outline">
-                      <a href={auth.login.url}>{auth.login.title}</a>
-                    </Button>
-                    <Button asChild>
-                      <a href={auth.signup.url}>{auth.signup.title}</a>
-                    </Button>
+                    {!session && (
+                      <div className="flex flex-col gap-3">
+                        <Button asChild variant="outline">
+                          <a href={auth.login.url}>{auth.login.title}</a>
+                        </Button>
+                        <Button asChild>
+                          <a href={auth.signup.url}>{auth.signup.title}</a>
+                        </Button>
+                      </div>
+                    )}
+
                   </div>
-                </div>
-              </SheetContent>
-            </Sheet>
+                </SheetContent>
+              </Sheet>
+            </div>
           </div>
         </div>
       </div>

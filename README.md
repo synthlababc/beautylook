@@ -16,6 +16,11 @@ bun dev
 
 ## sql
 ```bash
+# 重新生成 Prisma Client
+npx prisma generate
+```
+
+```bash
 npx prisma migrate dev --name init
 ```
 

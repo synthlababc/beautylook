@@ -1,6 +1,6 @@
 "use client";
 
-import { Book, Menu, Sunset, Trees, Zap } from "lucide-react";
+import { Book, Menu, Sunset, Trees, Zap, ShoppingCart } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { useSession, signOut } from "next-auth/react";
 
@@ -152,8 +152,22 @@ const Navbar1 = ({
   const { data: session, status } = useSession();
 
   if (status === "loading") {
-    return null; // 可选：显示加载状态
+    return null;
   }
+
+  const renderCartButton = () => (
+    <Button
+      variant="ghost"
+      size="icon"
+      className="relative"
+      onClick={() => router.push("/cart")}
+    >
+      <ShoppingCart className="h-5 w-5" />
+      <span className="absolute -right-1 -top-1 flex h-4 w-4 items-center justify-center rounded-full bg-primary text-xs text-primary-foreground">
+        0
+      </span>
+    </Button>
+  );
 
   return (
     <section className="py-4">
@@ -177,61 +191,64 @@ const Navbar1 = ({
             </div>
           </div>
 
-          {/* 登录状态判断 */}
-          {session ? (
-            <DropdownMenu>
-              <DropdownMenuTrigger asChild>
-                <Button variant="ghost" className="relative h-8 w-8 rounded-full">
-                  <Avatar className="h-10 w-10">
-                    <AvatarImage
-                      src={session.user?.image || undefined}
-                      alt={session.user?.name || "User"}
-                    />
-                    <AvatarFallback>
-                      {session.user?.name?.charAt(0) || "U"}
-                    </AvatarFallback>
-                  </Avatar>
+          <div className="flex items-center gap-4">
+            {renderCartButton()}
+
+            {session ? (
+              <DropdownMenu>
+                <DropdownMenuTrigger asChild>
+                  <Button variant="ghost" className="relative h-8 w-8 rounded-full">
+                    <Avatar className="h-10 w-10">
+                      <AvatarImage
+                        src={session.user?.image || undefined}
+                        alt={session.user?.name || "User"}
+                      />
+                      <AvatarFallback>
+                        {session.user?.name?.charAt(0) || "U"}
+                      </AvatarFallback>
+                    </Avatar>
+                  </Button>
+                </DropdownMenuTrigger>
+                <DropdownMenuContent align="end">
+                  <DropdownMenuLabel className="font-normal">
+                    <p className="text-sm font-medium">{session.user?.name}</p>
+                    <p className="text-xs text-muted-foreground">
+                      {session.user?.email}
+                    </p>
+                  </DropdownMenuLabel>
+                  <DropdownMenuSeparator />
+                  <DropdownMenuItem
+                    onClick={() => router.push("/user/profile")}
+                    className="cursor-pointer"
+                  >
+                    Profile
+                  </DropdownMenuItem>
+                  <DropdownMenuItem
+                    onClick={() => router.push("/user/orders")}
+                    className="cursor-pointer"
+                  >
+                    Orders
+                  </DropdownMenuItem>
+                  <DropdownMenuSeparator />
+                  <DropdownMenuItem
+                    onClick={() => signOut({ callbackUrl: "/" })}
+                    className="cursor-pointer text-red-600 focus:text-red-600"
+                  >
+                    Sign out
+                  </DropdownMenuItem>
+                </DropdownMenuContent>
+              </DropdownMenu>
+            ) : (
+              <div className="flex gap-2">
+                <Button asChild variant="outline" size="sm">
+                  <a href={auth.login.url}>{auth.login.title}</a>
                 </Button>
-              </DropdownMenuTrigger>
-              <DropdownMenuContent align="end">
-                <DropdownMenuLabel className="font-normal">
-                  <p className="text-sm font-medium">{session.user?.name}</p>
-                  <p className="text-xs text-muted-foreground">
-                    {session.user?.email}
-                  </p>
-                </DropdownMenuLabel>
-                <DropdownMenuSeparator />
-                <DropdownMenuItem
-                  onClick={() => router.push("/user/profile")}
-                  className="cursor-pointer"
-                >
-                  Profile
-                </DropdownMenuItem>
-                <DropdownMenuItem
-                  onClick={() => router.push("/user/orders")}
-                  className="cursor-pointer"
-                >
-                  Orders
-                </DropdownMenuItem>
-                <DropdownMenuSeparator />
-                <DropdownMenuItem
-                  onClick={() => signOut({ callbackUrl: "/" })}
-                  className="cursor-pointer text-red-600 focus:text-red-600"
-                >
-                  Sign out
-                </DropdownMenuItem>
-              </DropdownMenuContent>
-            </DropdownMenu>
-          ) : (
-            <div className="flex gap-2">
-              <Button asChild variant="outline" size="sm">
-                <a href={auth.login.url}>{auth.login.title}</a>
-              </Button>
-              <Button asChild size="sm">
-                <a href={auth.signup.url}>{auth.signup.title}</a>
-              </Button>
-            </div>
-          )}
+                <Button asChild size="sm">
+                  <a href={auth.signup.url}>{auth.signup.title}</a>
+                </Button>
+              </div>
+            )}
+          </div>
         </nav>
 
         {/* Mobile Menu */}
@@ -242,6 +259,8 @@ const Navbar1 = ({
               <img src={logo.src} className="max-h-8" alt={logo.alt} />
             </a>
             <div className="flex items-center gap-2">
+              {renderCartButton()}
+
               {session && (
                 <DropdownMenu>
                   <DropdownMenuTrigger asChild>
@@ -320,7 +339,6 @@ const Navbar1 = ({
                         </Button>
                       </div>
                     )}
-
                   </div>
                 </SheetContent>
               </Sheet>

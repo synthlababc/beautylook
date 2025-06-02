@@ -8,7 +8,7 @@ import { usePathname } from "next/navigation";
 
 export default function UserLayout({ children }: { children: React.ReactNode }) {
     const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
-    const [isMobile, setIsMobile] = useState(false);
+    const [, setIsMobile] = useState(false);
     const pathname = usePathname();
 
     useEffect(() => {

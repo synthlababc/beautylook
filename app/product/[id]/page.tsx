@@ -1,130 +1,195 @@
-// app/products/[id]/page.tsx
-'use client';
+"use client";
 
 import { useEffect, useState } from "react";
-import { useParams } from "next/navigation";
 import Image from "next/image";
-import Link from "next/link";
-
-import { Badge } from "@/components/ui/badge";
-import {
-    Card,
-    CardHeader,
-    CardContent,
-} from "@/components/ui/card";
+import { useParams } from "next/navigation";
+import ReactMarkdown from "react-markdown";
+import { Dialog, DialogContent } from "@radix-ui/react-dialog";
 import { Button } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
-import { ArrowLeftIcon, ShoppingCartIcon } from "lucide-react";
-
-const currencyLocale: Record<string, string> = {
-    CNY: "zh-CN",
-    USD: "en-US",
-    EUR: "de-DE",
-    JPY: "ja-JP",
-};
-
-function formatCurrency(amount: string, currency: string) {
-    const value = parseFloat(amount);
-    const locale = currencyLocale[currency] ?? "en-US";
-    return new Intl.NumberFormat(locale, {
-        style: "currency",
-        currency,
-    }).format(value);
-}
-
-const statusVariant: Record<string, "default" | "secondary" | "destructive"> = {
-    NEW: "default",
-    HOT: "destructive",
-    NORMAL: "secondary",
-};
+import { Minus, Plus } from "lucide-react";
+import { useRouter } from "next/navigation";
 
 interface Product {
     id: number;
     name: string;
-    description: string;
     price: string;
-    currency: string;
-    status: string;
     image: string;
-    detail?: string;
+    description: string;
+    detail: string;
+    currency: string;
     category: {
-        id: number;
         name: string;
     };
 }
 
-export default function ProductDetailPage() {
-    const params = useParams();
-    const id = params?.id;
+export default function ProductPage() {
+    const { id } = useParams<{ id: string }>();
     const [product, setProduct] = useState<Product | null>(null);
+    const [quantity, setQuantity] = useState(1);
+    const [loading, setLoading] = useState(false);
+    const [cartOpen, setCartOpen] = useState(false);
+
+    const router = useRouter();
 
     useEffect(() => {
         if (!id) return;
         fetch(`/api/products/${id}`)
             .then((res) => res.json())
-            .then((data) => setProduct(data))
+            .then(setProduct)
             .catch(console.error);
     }, [id]);
 
-    if (!product) {
-        return <div className="p-8 text-center">Loading...</div>;
-    }
+    const increase = () => setQuantity((q) => q + 1);
+    const decrease = () => setQuantity((q) => (q > 1 ? q - 1 : 1));
+
+    const handleAddToCart = async () => {
+        if (!product || loading) return;
+        setLoading(true);
+        try {
+            const res = await fetch("/api/cart", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                },
+                body: JSON.stringify({
+                    productId: product.id,
+                    quantity,
+                }),
+            });
+
+            if (!res.ok) {
+                throw new Error("Failed to add item to cart");
+            }
+
+            // alert(`Added to cart: ${product.name} (×${quantity})`);
+            setCartOpen(true); // 打开购物车对话框
+        } catch (error) {
+            console.error(error);
+            alert("Failed to add item to cart");
+        } finally {
+            setLoading(false);
+        }
+    };
+
+    if (!product) return <div className="p-10 text-center">Loading...</div>;
 
     return (
-        <div className="container mx-auto max-w-5xl py-8 px-4">
-            <Link
-                href="/product"
-                className="mb-4 inline-flex items-center text-sm hover:underline"
-            >
-                <ArrowLeftIcon className="mr-1 h-4 w-4" /> Back to products
-            </Link>
+        <div className="container mx-auto px-4 py-10 grid gap-10 md:grid-cols-2">
+            {/* 左侧图片 */}
+            <div className="flex justify-center items-start">
+                <Image
+                    src={product.image}
+                    alt={product.name}
+                    width={500}
+                    height={500}
+                    className="rounded-2xl shadow object-contain max-h-[500px] w-auto"
+                />
+            </div>
 
-            <Card className="grid grid-cols-1 md:grid-cols-2 gap-6 shadow-xl">
-                <CardHeader className="p-0 relative overflow-hidden rounded-2xl min-h-[300px]">
-                    <Image
-                        src={product.image}
-                        alt={product.name}
-                        fill
-                        sizes="(min-width: 768px) 50vw, 100vw"
-                        className="object-cover"
-                        priority
-                    />
-                </CardHeader>
+            {/* 右侧信息 */}
+            <div className="space-y-6">
+                <div>
+                    <h1 className="text-3xl font-bold">{product.name}</h1>
+                    <p className="mt-2 text-2xl font-semibold">
+                        $ {parseFloat(product.price).toFixed(2)}
+                    </p>
+                    <p className="text-xl text-muted-foreground">
+                        {product.description}
+                    </p>
+                </div>
 
-                <CardContent className="flex flex-col space-y-4">
-                    <div className="flex items-center space-x-2">
-                        <Badge variant={statusVariant[product.status] || "secondary"}>{product.status}</Badge>
-                        <Separator orientation="vertical" className="h-4" />
-                        <span className="text-sm text-muted-foreground">
-                            {product.category?.name}
-                        </span>
+                <ul className="list-disc pl-5 space-y-1">
+                    <li>
+                        <span className="font-medium">category:</span> {product.category.name}
+                    </li>
+                </ul>
+
+                <Separator />
+
+                <div className="space-y-4">
+                    {/* 数量选择器 */}
+                    <div>
+                        <p className="mb-1 font-medium">Quantity</p>
+                        <div className="flex items-center border rounded-lg w-max overflow-hidden">
+                            <Button
+                                onClick={decrease}
+                                className="rounded-none border-r"
+                                variant="ghost"
+                            >
+                                <Minus className="w-4 h-4" />
+                            </Button>
+                            <div className="px-4 min-w-[40px] text-center select-none">
+                                {quantity}
+                            </div>
+                            <Button
+                                onClick={increase}
+                                className="rounded-none border-l"
+                                variant="ghost"
+                            >
+                                <Plus className="w-4 h-4" />
+                            </Button>
+                        </div>
                     </div>
 
-                    <h1 className="text-3xl font-bold tracking-tight leading-tight">
-                        {product.name}
-                    </h1>
-
-                    <p className="text-base text-muted-foreground">{product.description}</p>
-
-                    <p className="text-2xl font-semibold">
-                        {formatCurrency(product.price, product.currency)}
-                    </p>
-
-                    <Button size="lg" className="w-full md:w-auto">
-                        <ShoppingCartIcon className="mr-2 h-5 w-5" /> Add to cart
+                    {/* 加入购物车按钮 */}
+                    <Button
+                        size="lg"
+                        className="w-full"
+                        onClick={handleAddToCart}
+                        disabled={loading}
+                    >
+                        {loading ? "Adding..." : "Add to Cart"}
                     </Button>
-                </CardContent>
-            </Card>
+                </div>
+            </div>
 
-            {product.detail && (
-                <section className="mt-10 text-center">
-                    <h2 className="text-2xl font-semibold mb-4">Product Details</h2>
-                    <article
-                        className="prose lg:prose-lg mx-auto text-left"
-                        dangerouslySetInnerHTML={{ __html: product.detail }}
-                    />
-                </section>
-            )}
+            {/* 产品详情 markdown */}
+            <div className="md:col-span-2">
+                <Separator className="my-10" />
+                <div className="prose md:prose-lg max-w-none">
+                    <ReactMarkdown>{product.detail}</ReactMarkdown>
+                </div>
+            </div>
+
+            {/* 购物车弹窗 */}
+            <Dialog open={cartOpen} onOpenChange={setCartOpen}>
+                <DialogContent className="fixed top-5 right-5 bg-white p-4 rounded-lg shadow-md">
+                    <div className="flex justify-between items-center mb-4">
+                        <h2 className="text-lg font-medium">JUST ADDED TO YOUR CART</h2>
+                        <button onClick={() => setCartOpen(false)} className="text-gray-500 hover:text-gray-700">
+                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" className="w-6 h-6">
+                                <path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" />
+                            </svg>
+                        </button>
+                    </div>
+                    <div className="flex items-center mb-4">
+                        <Image
+                            src={product.image}
+                            alt={product.name}
+                            width={50}
+                            height={50}
+                            className="mr-4"
+                        />
+                        <div>
+                            <p className="text-base font-medium">{product.name}</p>
+                            <p className="text-sm text-gray-500">QTY: {quantity}</p>
+                        </div>
+                    </div>
+                    <Button
+                        onClick={() => {
+                            setCartOpen(false); // 关闭弹窗
+                            router.push("/cart"); // 跳转到购物车页面
+                        }}
+                        className="w-full mb-2"
+                    >
+                        VIEW CART ({quantity})
+                    </Button>
+                    <Button onClick={() => setCartOpen(false)} variant="outline" className="w-full">
+                        Continue Shopping
+                    </Button>
+                </DialogContent>
+            </Dialog>
         </div>
     );
 }

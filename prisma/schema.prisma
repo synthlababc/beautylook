@@ -48,6 +48,8 @@ model User {
   accounts      Account[]
   sessions      Session[]
   ResetPassword ResetPassword[]
+  Cart          Cart[]
+  orders        Order[]
 }
 
 model VerificationToken {
@@ -94,10 +96,55 @@ model Product {
   updatedAt   DateTime      @updatedAt
   category    Category      @relation(fields: [categoryId], references: [id])
   categoryId  Int
+  CartItem    CartItem[]
+  orderItems  OrderItem[]
 }
 
 model Category {
   id       Int       @id @default(autoincrement())
   name     String
   products Product[]
+}
+
+model Cart {
+  id        String     @id @default(cuid())
+  userId    String?
+  user      User?      @relation(fields: [userId], references: [id])
+  items     CartItem[]
+  createdAt DateTime   @default(now())
+  updatedAt DateTime   @updatedAt
+}
+
+model CartItem {
+  id        Int      @id @default(autoincrement())
+  cart      Cart     @relation(fields: [cartId], references: [id])
+  cartId    String
+  product   Product  @relation(fields: [productId], references: [id])
+  productId Int
+  quantity  Int      @default(1)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@unique([cartId, productId])
+}
+
+model Order {
+  id          Int         @id @default(autoincrement())
+  userId      String?
+  user        User?       @relation(fields: [userId], references: [id], onDelete: SetNull)
+  totalAmount Decimal
+  status      String      @default("pending") // pending, paid, cancelled 等状态
+  createdAt   DateTime    @default(now())
+  updatedAt   DateTime    @updatedAt
+  items       OrderItem[]
+}
+
+model OrderItem {
+  id        Int     @id @default(autoincrement())
+  orderId   Int
+  productId Int
+  quantity  Int
+  price     Decimal
+  order     Order   @relation(fields: [orderId], references: [id])
+  product   Product @relation(fields: [productId], references: [id])
 }

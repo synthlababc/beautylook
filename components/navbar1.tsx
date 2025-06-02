@@ -1,6 +1,7 @@
 "use client";
 
-import { Book, Menu, Sunset, Trees, Zap, ShoppingCart } from "lucide-react";
+import { Book, Menu, Sunset, Trees, Zap } from "lucide-react";
+import CartIcon from "@/components/cart-icon";
 import { useRouter } from "next/navigation";
 import { useSession, signOut } from "next-auth/react";
 
@@ -155,19 +156,7 @@ const Navbar1 = ({
     return null;
   }
 
-  const renderCartButton = () => (
-    <Button
-      variant="ghost"
-      size="icon"
-      className="relative"
-      onClick={() => router.push("/cart")}
-    >
-      <ShoppingCart className="h-5 w-5" />
-      <span className="absolute -right-1 -top-1 flex h-4 w-4 items-center justify-center rounded-full bg-primary text-xs text-primary-foreground">
-        0
-      </span>
-    </Button>
-  );
+  const renderCartButton = () => <CartIcon />;
 
   return (
     <section className="py-4">

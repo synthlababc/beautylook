@@ -4,6 +4,7 @@ import "./globals.css";
 import Navbar from "./home/navbar/page";
 import Footer from "./home/footer/page";
 import { Providers } from "./providers";
+import PayPalProvider from "@/components/PayPalProviderClient";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -38,7 +39,7 @@ export default function RootLayout({
 
         <Providers>
           <Navbar />
-          {children}
+          <PayPalProvider>{children}</PayPalProvider>
           <Footer />
         </Providers>
 

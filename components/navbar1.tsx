@@ -202,13 +202,13 @@ const Navbar1 = ({
                 </DropdownMenuLabel>
                 <DropdownMenuSeparator />
                 <DropdownMenuItem
-                  onClick={() => router.push("/user")}
+                  onClick={() => router.push("/user/profile")}
                   className="cursor-pointer"
                 >
                   Profile
                 </DropdownMenuItem>
                 <DropdownMenuItem
-                  onClick={() => router.push("/user")}
+                  onClick={() => router.push("/user/orders")}
                   className="cursor-pointer"
                 >
                   Orders
@@ -266,13 +266,13 @@ const Navbar1 = ({
                     </DropdownMenuLabel>
                     <DropdownMenuSeparator />
                     <DropdownMenuItem
-                      onClick={() => router.push("/user")}
+                      onClick={() => router.push("/user/profile")}
                       className="cursor-pointer"
                     >
                       Profile
                     </DropdownMenuItem>
                     <DropdownMenuItem
-                      onClick={() => router.push("/user")}
+                      onClick={() => router.push("/user/orders")}
                       className="cursor-pointer"
                     >
                       Orders

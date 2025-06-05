@@ -1,9 +1,10 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { useForm, SubmitHandler } from "react-hook-form";
+import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import * as z from "zod";
+import { PayPalScriptProvider, PayPalButtons } from "@paypal/react-paypal-js";
 import {
     Card,
     CardContent,
@@ -12,9 +13,7 @@ import {
 } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { Button } from "@/components/ui/button";
 
-// Form validation schema
 const formSchema = z.object({
     contact: z.string().email("Please enter a valid email address"),
     fullName: z.string().min(1, "Full name is required"),
@@ -43,8 +42,32 @@ interface CartResponse {
 export default function CheckoutPage() {
     const [cart, setCart] = useState<CartResponse | null>(null);
     const [loading, setLoading] = useState<boolean>(true);
+    const [paypalLoading, setPaypalLoading] = useState<boolean>(false);
 
-    // 获取购物车数据
+    const {
+        register,
+        handleSubmit,
+        trigger,
+        getValues,
+        watch,
+        formState: { errors, isValid },
+    } = useForm<FormValues>({
+        resolver: zodResolver(formSchema),
+        mode: "onChange", // 实时验证
+        defaultValues: {
+            contact: "",
+            fullName: "",
+            telephone: "",
+            address: "",
+            city: "",
+        },
+    });
+
+    const paypalClientId = process.env.NEXT_PUBLIC_PAYPAL_CLIENT_ID;
+    if (!paypalClientId) {
+        console.error("Missing PayPal client ID");
+    }
+
     useEffect(() => {
         const fetchCart = async () => {
             try {
@@ -57,24 +80,61 @@ export default function CheckoutPage() {
                 setLoading(false);
             }
         };
-
         fetchCart();
     }, []);
 
-    const methods = useForm<FormValues>({
-        resolver: zodResolver(formSchema),
-        defaultValues: {
-            contact: "",
-            fullName: "",
-            telephone: "",
-            address: "",
-            city: "",
-        },
-    });
+    const createOrder = async () => {
+        const valid = await trigger(); // 表单验证
+        if (!valid || !cart) {
+            throw new Error("Invalid form or cart missing");
+        }
 
-    const onSubmit: SubmitHandler<FormValues> = (data) => {
-        console.log("提交的数据：", data);
+        const formData = getValues();
+
+        const response = await fetch("/api/orders/create", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({
+                cartId: cart.id,
+                ...formData,
+            }),
+        });
+
+        const result = await response.json();
+
+        if (!result.orderID) {
+            throw new Error("Failed to create PayPal order");
+        }
+
+        return result.orderID; // 👈 返回 orderID 给 JS SDK
     };
+
+
+    const onApprove = async (data: any) => {
+        setPaypalLoading(true);
+        try {
+            const response = await fetch(`/api/orders/capture`, {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({
+                    orderID: data.orderID,
+                }),
+            });
+
+            const result = await response.json();
+
+            if (result.status === "COMPLETED") {
+                window.location.href = "/order/success";
+            } else {
+                console.error("Payment not completed:", result);
+            }
+        } catch (error) {
+            console.error("Failed to capture payment:", error);
+        } finally {
+            setPaypalLoading(false);
+        }
+    };
+
 
     const totalPrice = cart?.items.reduce(
         (sum, item) => sum + item.product.price * item.quantity,
@@ -89,55 +149,34 @@ export default function CheckoutPage() {
                     <CardTitle>Shipping Information</CardTitle>
                 </CardHeader>
                 <CardContent>
-                    <form onSubmit={methods.handleSubmit(onSubmit)} className="space-y-4">
+                    <form
+                        className="space-y-4"
+                        onSubmit={handleSubmit(() => { })} // 必须加，不然验证无法触发
+                    >
                         <div className="grid w-full items-center gap-4">
-                            <div className="flex flex-col space-y-1.5">
-                                <Label htmlFor="contact">Email Address</Label>
-                                <Input {...methods.register("contact")} />
-                                {methods.formState.errors.contact && (
-                                    <p className="text-red-500 text-sm">{methods.formState.errors.contact.message}</p>
-                                )}
-                            </div>
-
-                            <div className="flex flex-col space-y-1.5">
-                                <Label htmlFor="fullName">Full Name</Label>
-                                <Input {...methods.register("fullName")} />
-                                {methods.formState.errors.fullName && (
-                                    <p className="text-red-500 text-sm">{methods.formState.errors.fullName.message}</p>
-                                )}
-                            </div>
-
-                            <div className="flex flex-col space-y-1.5">
-                                <Label htmlFor="telephone">Phone Number</Label>
-                                <Input {...methods.register("telephone")} />
-                                {methods.formState.errors.telephone && (
-                                    <p className="text-red-500 text-sm">{methods.formState.errors.telephone.message}</p>
-                                )}
-                            </div>
-
-                            <div className="flex flex-col space-y-1.5">
-                                <Label htmlFor="address">Address</Label>
-                                <Input {...methods.register("address")} />
-                                {methods.formState.errors.address && (
-                                    <p className="text-red-500 text-sm">{methods.formState.errors.address.message}</p>
-                                )}
-                            </div>
-
-                            <div className="flex flex-col space-y-1.5">
-                                <Label htmlFor="city">City</Label>
-                                <Input {...methods.register("city")} />
-                                {methods.formState.errors.city && (
-                                    <p className="text-red-500 text-sm">{methods.formState.errors.city.message}</p>
-                                )}
-                            </div>
+                            {[
+                                { id: "contact", label: "Email Address" },
+                                { id: "fullName", label: "Full Name" },
+                                { id: "telephone", label: "Phone Number" },
+                                { id: "address", label: "Address" },
+                                { id: "city", label: "City" },
+                            ].map(({ id, label }) => (
+                                <div className="flex flex-col space-y-1.5" key={id}>
+                                    <Label htmlFor={id}>{label}</Label>
+                                    <Input {...register(id as keyof FormValues)} />
+                                    {errors[id as keyof FormValues] && (
+                                        <p className="text-red-500 text-sm">
+                                            {errors[id as keyof FormValues]?.message as string}
+                                        </p>
+                                    )}
+                                </div>
+                            ))}
                         </div>
-
-                        <Button type="submit" className="mt-4 w-full">Place Order</Button>
                     </form>
                 </CardContent>
             </Card>
 
-            {/* 右侧 - 订单摘要 */}
+            {/* 右侧 - 订单摘要和支付 */}
             <Card className="w-1/2">
                 <CardHeader>
                     <CardTitle>Order Summary</CardTitle>
@@ -153,7 +192,6 @@ export default function CheckoutPage() {
                                 <div className="space-y-4">
                                     {cart?.items.map((item) => (
                                         <div key={item.id} className="flex items-start gap-4 border-b pb-4">
-                                            {/* 商品图片（占位图） */}
                                             <div className="w-16 h-16 bg-gray-200 rounded"></div>
                                             <div className="flex-1">
                                                 <h3 className="font-semibold">{item.product.name}</h3>
@@ -165,7 +203,6 @@ export default function CheckoutPage() {
                                 </div>
                             )}
 
-                            {/* 显示总价 */}
                             <div className="mt-6 space-y-2">
                                 <div className="flex justify-between">
                                     <span>Subtotal</span>
@@ -179,13 +216,30 @@ export default function CheckoutPage() {
                                     <span>Total</span>
                                     <span>${totalPrice.toFixed(2)}</span>
                                 </div>
-                                <p className="text-xs text-gray-500">(Includes tax $0.00)</p>
                             </div>
 
-                            <textarea
-                                placeholder="Add a note to your order..."
-                                className="w-full h-16 mt-4 p-2 border rounded-md"
-                            ></textarea>
+                            <div className="mt-6">
+                                {paypalClientId ? (
+                                    <PayPalScriptProvider
+                                        options={{
+                                            clientId: paypalClientId,
+                                            currency: "USD",
+                                            intent: "capture",
+                                        }}
+                                    >
+                                        <PayPalButtons
+                                            createOrder={createOrder}
+                                            onApprove={onApprove}
+                                            onError={(err) => console.error("PayPal error", err)}
+                                            style={{ layout: "vertical" }}
+                                            disabled={paypalLoading || !isValid}
+                                        />
+                                    </PayPalScriptProvider>
+
+                                ) : (
+                                    <p className="text-red-500">PayPal client ID not configured</p>
+                                )}
+                            </div>
                         </>
                     )}
                 </CardContent>

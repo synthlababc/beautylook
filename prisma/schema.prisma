@@ -50,6 +50,7 @@ model User {
   ResetPassword ResetPassword[]
   Cart          Cart[]
   orders        Order[]
+  Address       Address[]
 }
 
 model VerificationToken {
@@ -129,14 +130,21 @@ model CartItem {
 }
 
 model Order {
-  id          Int         @id @default(autoincrement())
-  userId      String?
-  user        User?       @relation(fields: [userId], references: [id], onDelete: SetNull)
-  totalAmount Decimal
-  status      String      @default("pending") // pending, paid, cancelled 等状态
-  createdAt   DateTime    @default(now())
-  updatedAt   DateTime    @updatedAt
-  items       OrderItem[]
+  id            Int         @id @default(autoincrement())
+  userId        String?
+  user          User?       @relation(fields: [userId], references: [id], onDelete: SetNull)
+  addressId     Int? // 👈 新增字段
+  address       Address?    @relation(fields: [addressId], references: [id]) // 👈 新增关系
+  totalAmount   Decimal
+  status        String      @default("pending")
+  paypalId      String?     @unique
+  paymentStatus String      @default("unpaid")
+  paidAt        DateTime?
+  transactionId String?
+  amountPaid    Decimal     @default(0.00)
+  createdAt     DateTime    @default(now())
+  updatedAt     DateTime    @updatedAt
+  items         OrderItem[]
 }
 
 model OrderItem {
@@ -147,4 +155,20 @@ model OrderItem {
   price     Decimal
   order     Order   @relation(fields: [orderId], references: [id])
   product   Product @relation(fields: [productId], references: [id])
+}
+
+model Address {
+  id         Int      @id @default(autoincrement())
+  userId     String
+  user       User     @relation(fields: [userId], references: [id])
+  fullName   String
+  phone      String
+  address    String
+  city       String
+  postalCode String?
+  country    String
+  isDefault  Boolean  @default(false)
+  orders     Order[] // 可选：表示这个地址被用于哪些订单
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
 }

@@ -123,6 +123,7 @@ export async function POST(request: Request) {
             },
         });
 
+        console.log("orderid:", order.id)
         // 清空购物车
         await prisma.cartItem.deleteMany({
             where: { cartId },

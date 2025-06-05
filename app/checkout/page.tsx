@@ -39,6 +39,11 @@ interface CartResponse {
     items: CartItem[];
 }
 
+interface OnApproveData {
+    orderID: string;
+    // 你也可以根据需要添加其他字段
+}
+
 export default function CheckoutPage() {
     const [cart, setCart] = useState<CartResponse | null>(null);
     const [loading, setLoading] = useState<boolean>(true);
@@ -49,7 +54,6 @@ export default function CheckoutPage() {
         handleSubmit,
         trigger,
         getValues,
-        watch,
         formState: { errors, isValid },
     } = useForm<FormValues>({
         resolver: zodResolver(formSchema),
@@ -110,7 +114,7 @@ export default function CheckoutPage() {
     };
 
 
-    const onApprove = async (data: any) => {
+    const onApprove = async (data: OnApproveData) => {
         setPaypalLoading(true);
         try {
             const response = await fetch(`/api/orders/capture`, {

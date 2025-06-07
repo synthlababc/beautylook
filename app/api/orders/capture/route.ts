@@ -2,29 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import prisma from "@/lib/prisma";
 import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth";
-
-const clientId = process.env.PAYPAL_CLIENT_ID!;
-const clientSecret = process.env.PAYPAL_CLIENT_SECRET!;
-const baseUrl = process.env.PAYPAL_API_BASE_URL!; // 例如 https://api-m.sandbox.paypal.com
-
-async function getAccessToken() {
-    const auth = Buffer.from(`${clientId}:${clientSecret}`).toString("base64");
-    const res = await fetch(`${baseUrl}/v1/oauth2/token`, {
-        method: "POST",
-        headers: {
-            Authorization: `Basic ${auth}`,
-            "Content-Type": "application/x-www-form-urlencoded",
-        },
-        body: "grant_type=client_credentials",
-    });
-
-    if (!res.ok) {
-        throw new Error("Failed to fetch PayPal access token");
-    }
-
-    const data = await res.json();
-    return data.access_token as string;
-}
+import { getPayPalAccessToken, baseUrl } from "@/lib/paypal";
 
 export async function POST(req: NextRequest) {
     const session = await getServerSession(authOptions);
@@ -39,7 +17,7 @@ export async function POST(req: NextRequest) {
         }
 
         // 1. 获取 access_token
-        const accessToken = await getAccessToken();
+        const accessToken = await getPayPalAccessToken();
 
         // 2. 调用订单捕获接口
         const captureRes = await fetch(`${baseUrl}/v2/checkout/orders/${orderID}/capture`, {

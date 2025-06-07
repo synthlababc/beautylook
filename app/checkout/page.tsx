@@ -224,22 +224,13 @@ export default function CheckoutPage() {
 
                             <div className="mt-6">
                                 {paypalClientId ? (
-                                    <PayPalScriptProvider
-                                        options={{
-                                            clientId: paypalClientId,
-                                            currency: "USD",
-                                            intent: "capture",
-                                        }}
-                                    >
-                                        <PayPalButtons
-                                            createOrder={createOrder}
-                                            onApprove={onApprove}
-                                            onError={(err) => console.error("PayPal error", err)}
-                                            style={{ layout: "vertical" }}
-                                            disabled={paypalLoading || !isValid}
-                                        />
-                                    </PayPalScriptProvider>
-
+                                    <PayPalButtons
+                                        createOrder={createOrder}
+                                        onApprove={onApprove}
+                                        onError={(err) => console.error("PayPal error", err)}
+                                        style={{ layout: "vertical" }}
+                                        disabled={paypalLoading || !isValid}
+                                    />
                                 ) : (
                                     <p className="text-red-500">PayPal client ID not configured</p>
                                 )}

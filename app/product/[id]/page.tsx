@@ -4,7 +4,8 @@ import { useEffect, useState } from "react";
 import Image from "next/image";
 import { useParams } from "next/navigation";
 import ReactMarkdown from "react-markdown";
-import { Dialog, DialogContent } from "@radix-ui/react-dialog";
+import remarkGfm from "remark-gfm";
+import { Dialog, DialogContent, DialogTitle, DialogDescription } from "@radix-ui/react-dialog";
 import { Button } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
 import { Minus, Plus } from "lucide-react";
@@ -148,17 +149,35 @@ export default function ProductPage() {
             <div className="md:col-span-2">
                 <Separator className="my-10" />
                 <div className="prose md:prose-lg max-w-none">
-                    <ReactMarkdown>{product.detail}</ReactMarkdown>
+                    <ReactMarkdown
+                        remarkPlugins={[remarkGfm]}
+                        components={{
+                            img: ({ node, ...props }) => (
+                                <img className="rounded-lg my-4" {...props} />
+                            ),
+                            table: ({ node, ...props }) => (
+                                <div className="overflow-x-auto">
+                                    <table className="min-w-full" {...props} />
+                                </div>
+                            )
+                        }}
+                    >
+                        {product.detail}
+                    </ReactMarkdown>
                 </div>
             </div>
 
             {/* 购物车弹窗 */}
             <Dialog open={cartOpen} onOpenChange={setCartOpen}>
                 <DialogContent className="fixed top-5 right-5 bg-white p-4 rounded-lg shadow-md">
+                    <DialogTitle className="sr-only">Cart Notification</DialogTitle>
+                    <DialogDescription className="sr-only">
+                        Notification about items added to your shopping cart
+                    </DialogDescription>
                     <div className="flex justify-between items-center mb-4">
                         <h2 className="text-lg font-medium">JUST ADDED TO YOUR CART</h2>
                         <button onClick={() => setCartOpen(false)} className="text-gray-500 hover:text-gray-700">
-                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" className="w-6 h-6">
+                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth="1.5" stroke="currentColor" className="w-6 h-6">
                                 <path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" />
                             </svg>
                         </button>

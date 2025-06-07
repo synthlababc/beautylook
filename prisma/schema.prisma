@@ -133,8 +133,8 @@ model Order {
   id            Int         @id @default(autoincrement())
   userId        String?
   user          User?       @relation(fields: [userId], references: [id], onDelete: SetNull)
-  addressId     Int? // 👈 新增字段
-  address       Address?    @relation(fields: [addressId], references: [id]) // 👈 新增关系
+  addressId     Int?
+  address       Address?    @relation(fields: [addressId], references: [id])
   totalAmount   Decimal
   status        String      @default("pending")
   paypalId      String?     @unique
@@ -142,6 +142,7 @@ model Order {
   paidAt        DateTime?
   transactionId String?
   amountPaid    Decimal     @default(0.00)
+  contact       String // <--- **这里！新增 contact 字段**
   createdAt     DateTime    @default(now())
   updatedAt     DateTime    @updatedAt
   items         OrderItem[]
@@ -164,11 +165,12 @@ model Address {
   fullName   String
   phone      String
   address    String
+  apartment  String? // <--- 新增的字段，对应前端的 apartment
   city       String
   postalCode String?
   country    String
   isDefault  Boolean  @default(false)
-  orders     Order[] // 可选：表示这个地址被用于哪些订单
+  orders     Order[]
   createdAt  DateTime @default(now())
   updatedAt  DateTime @updatedAt
 }

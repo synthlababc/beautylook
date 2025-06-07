@@ -32,13 +32,14 @@ export async function POST(request: Request) {
             0
         );
         const totalAmountFormatted = totalAmount.toFixed(2);
+        const fullName = `${formData.firstName || ""} ${formData.lastName || ""}`.trim();
 
         // 创建地址记录
         const address = await prisma.address.create({
             data: {
                 userId: session.user.id!,
-                fullName: formData.fullName,
-                phone: formData.telephone,
+                fullName: fullName,
+                phone: formData.phone,
                 address: formData.address,
                 city: formData.city,
                 country: "US",
@@ -90,6 +91,7 @@ export async function POST(request: Request) {
                 paypalId: paypalOrderId,
                 status: "PENDING",
                 paymentStatus: "CREATED",
+                contact: formData.contact,
                 items: {
                     create: cart.items.map((item) => ({
                         productId: item.productId,

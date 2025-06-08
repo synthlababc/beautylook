@@ -118,7 +118,7 @@ export default function CheckoutPage() {
 
         const formData = getValues();
 
-        const response = await fetch("/api/orders/create", {
+        const response = await fetch("/api/order/create", {
             method: "POST",
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify({
@@ -139,7 +139,7 @@ export default function CheckoutPage() {
     const onApprove = async (data: OnApproveData) => {
         setPaypalLoading(true);
         try {
-            const response = await fetch(`/api/orders/capture`, {
+            const response = await fetch(`/api/order/capture`, {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify({

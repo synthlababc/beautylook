@@ -55,14 +55,14 @@ export default function UserLayout({ children }: { children: React.ReactNode }) 
                                 </Link>
 
                                 <Link
-                                    href="/user/orders"
-                                    className={`flex items-center rounded p-2 text-sm font-medium transition-colors ${isActive("/user/orders")
+                                    href="/user/order"
+                                    className={`flex items-center rounded p-2 text-sm font-medium transition-colors ${isActive("/user/order")
                                         ? "bg-primary text-primary-foreground hover:bg-primary/90"
                                         : "hover:bg-accent hover:text-accent-foreground"
                                         } ${sidebarCollapsed ? "justify-center" : ""}`}
                                 >
                                     <ShoppingCart className="h-4 w-4" />
-                                    {!sidebarCollapsed && <span className="ml-2">Orders</span>}
+                                    {!sidebarCollapsed && <span className="ml-2">order</span>}
                                 </Link>
                             </nav>
                         </div>

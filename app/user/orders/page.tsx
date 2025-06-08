@@ -7,16 +7,16 @@ import {
     TableRow,
 } from "@/components/ui/table";
 
-const orders = [
+const order = [
     { id: "1", product: "Laptop", date: "2025-05-10", amount: "$999.99" },
     { id: "2", product: "Phone", date: "2025-05-12", amount: "$799.99" },
     { id: "3", product: "Monitor", date: "2025-05-15", amount: "$299.99" },
 ];
 
-export default function OrdersPage() {
+export default function orderPage() {
     return (
         <div className="p-4 space-y-4">
-            <h1 className="text-xl font-bold">Orders</h1>
+            <h1 className="text-xl font-bold">order</h1>
 
             <div className="overflow-x-auto">
                 <Table className="w-full">
@@ -29,7 +29,7 @@ export default function OrdersPage() {
                         </TableRow>
                     </TableHeader>
                     <TableBody>
-                        {orders.map((order) => (
+                        {order.map((order) => (
                             <TableRow key={order.id}>
                                 <TableCell>{order.id}</TableCell>
                                 <TableCell className="font-medium">{order.product}</TableCell>

@@ -52,7 +52,7 @@ export async function POST(request: Request) {
         // ---------------------------
         // 1. 获取 access_token
         const accessToken = await getPayPalAccessToken();
-        const paypalRes = await fetch(`${baseUrl}/v2/checkout/orders`, {
+        const paypalRes = await fetch(`${baseUrl}/v2/checkout/order`, {
             method: "POST",
             headers: {
                 Authorization: `Bearer ${accessToken}`,

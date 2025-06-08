@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { Suspense, useState, useEffect } from "react";
 import { useSearchParams } from "next/navigation";
 import {
     Card,
@@ -24,13 +24,21 @@ interface OrderItem {
 
 interface Order {
     id: string;
-    orderNumber: string,
+    orderNumber: string;
     createdAt: string;
     totalAmount: number;
     items: OrderItem[];
 }
 
 export default function OrderSuccessPage() {
+    return (
+        <Suspense fallback="Loading...">
+            <OrderSuccessContent />
+        </Suspense>
+    );
+}
+
+function OrderSuccessContent() {
     const [order, setOrder] = useState<Order | null>(null);
     const [loading, setLoading] = useState(true);
     const searchParams = useSearchParams();

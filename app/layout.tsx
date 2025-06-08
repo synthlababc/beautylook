@@ -5,6 +5,7 @@ import Navbar from "./home/navbar/page";
 import Footer from "./home/footer/page";
 import { Providers } from "./providers";
 import PayPalProvider from "@/components/PayPalProviderClient";
+import { GoogleAnalytics } from '@next/third-parties/google'
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -42,7 +43,7 @@ export default function RootLayout({
           <PayPalProvider>{children}</PayPalProvider>
           <Footer />
         </Providers>
-
+        <GoogleAnalytics gaId="G-3LYM166ETK" />
       </body>
     </html>
   );

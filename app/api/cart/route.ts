@@ -14,10 +14,13 @@ export async function GET() {
             where: {
                 user: {
                     email: session.user.email
-                }
+                },
             },
             include: {
                 items: {
+                    where: {
+                        deletedAt: null // 只获取未被软删除的购物车项
+                    },
                     include: {
                         product: true
                     }
@@ -170,9 +173,13 @@ export async function DELETE(req: Request) {
 
         const { itemId } = await req.json()
 
-        await prisma.cartItem.delete({
-            where: { id: itemId }
-        })
+        // await prisma.cartItem.delete({
+        //     where: { id: itemId }
+        // })
+        await prisma.cartItem.updateMany({
+            where: { id: itemId },
+            data: { deletedAt: new Date() }, // ✅ 现在 OK
+        });
 
         const cart = await prisma.cart.findFirst({
             where: {

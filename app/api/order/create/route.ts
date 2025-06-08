@@ -105,8 +105,9 @@ export async function POST(request: Request) {
 
         console.log("orderid:", order.id)
         // 清空购物车
-        await prisma.cartItem.deleteMany({
+        await prisma.cartItem.updateMany({
             where: { cartId },
+            data: { deletedAt: new Date() },
         });
 
         // -------------------------------

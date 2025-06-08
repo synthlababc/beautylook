@@ -12,22 +12,22 @@ const Footer2Data = {
         {
             title: "Product",
             links: [
-                { text: "Overview", url: "#" },
-                { text: "Pricing", url: "#" },
-                { text: "Marketplace", url: "#" },
-                { text: "Features", url: "#" },
+                { text: "Overview", url: "/product" },
+                { text: "Pricing", url: "/product" },
+                { text: "Marketplace", url: "/product" },
+                { text: "Features", url: "/product" },
             ],
         },
         {
             title: "Resources",
             links: [
-                { text: "FAQ", url: "#" },
+                { text: "FAQ", url: "/faq" },
             ],
         },
         {
             title: "Social",
             links: [
-                { text: "Email", url: "#" },
+                { text: "Email: contact@beautylook.top", url: "/" },
             ],
         },
     ],
@@ -40,6 +40,6 @@ const Footer2Data = {
 
 export default function Footer() {
     return (
-        <Footer2 {...Footer2Data}/>
+        <Footer2 {...Footer2Data} />
     );
 }

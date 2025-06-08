@@ -10,7 +10,7 @@ const Navbar1Data = {
   menu: [
     { title: "HOME", url: "/" },
     {
-      title: "PRODUCTS",
+      title: "PRODUCT",
       url: "/product",
     },
     {

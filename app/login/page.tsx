@@ -7,9 +7,9 @@ export default function LoginPage() {
     heading: "Login",
     subheading: "Welcome back",
     logo: {
-      url: "https://www.shadcnblocks.com",
-      src: "https://shadcnblocks.com/images/block/logos/shadcnblockscom-icon.svg",
-      alt: "Shadcnblocks",
+      url: "https://beautylook.top/",
+      src: "/logo.png",
+      alt: "beautylook",
     },
     googleText: "Log in with Google"
   };

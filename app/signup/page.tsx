@@ -4,10 +4,10 @@ import React from 'react'
 export default function page() {
     const signupData = {
         logo: {
-            url: "https://www.shadcnblocks.com",
-            src: "https://shadcnblocks.com/images/block/logos/shadcnblockscom-wordmark.svg",
+            url: "beautylook.top",
+            src: "/logo.png",
             alt: "logo",
-            title: "shadcnblocks.com",
+            title: "beautylook",
         },
         loginUrl: "/login",
     }

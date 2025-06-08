@@ -152,10 +152,10 @@ export default function ProductPage() {
                     <ReactMarkdown
                         remarkPlugins={[remarkGfm]}
                         components={{
-                            img: ({ node, ...props }) => (
+                            img: ({ ...props }) => (
                                 <img className="rounded-lg my-4" {...props} />
                             ),
-                            table: ({ node, ...props }) => (
+                            table: ({ ...props }) => (
                                 <div className="overflow-x-auto">
                                     <table className="min-w-full" {...props} />
                                 </div>

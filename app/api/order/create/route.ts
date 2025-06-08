@@ -52,7 +52,7 @@ export async function POST(request: Request) {
         // ---------------------------
         // 1. 获取 access_token
         const accessToken = await getPayPalAccessToken();
-        const paypalRes = await fetch(`${baseUrl}/v2/checkout/order`, {
+        const paypalRes = await fetch(`${baseUrl}/v2/checkout/orders`, {
             method: "POST",
             headers: {
                 Authorization: `Bearer ${accessToken}`,
@@ -85,6 +85,7 @@ export async function POST(request: Request) {
         // -------------------------------
         const order = await prisma.order.create({
             data: {
+                orderNumber: generateOrderNumber(),
                 userId: session.user.id!,
                 addressId: address.id,
                 totalAmount,
@@ -120,3 +121,12 @@ export async function POST(request: Request) {
         return NextResponse.json({ error: "Internal Server Error" }, { status: 500 });
     }
 }
+
+function generateOrderNumber() {
+    const now = new Date();
+    const dateStr = now.toISOString().slice(0, 10).replace(/-/g, ''); // 20250608
+    const randomSuffix = Math.floor(Math.random() * 1000).toString().padStart(3, '0'); // 001
+    return `ORD-${dateStr}-${randomSuffix}`;
+}
+
+// 输出示例：ORD-20250608-042

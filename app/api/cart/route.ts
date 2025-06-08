@@ -38,8 +38,16 @@ export async function GET() {
 export async function POST(req: Request) {
     try {
         const session = await getServerSession(authOptions)
-        if (!session?.user?.email) {
-            return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
+        if (!session?.user?.id) {
+            return NextResponse.json({ error: 'Unauthorized - No user ID' }, { status: 401 })
+        }
+
+        // Verify user exists
+        const user = await prisma.user.findUnique({
+            where: { id: session.user.id }
+        })
+        if (!user) {
+            return NextResponse.json({ error: 'User not found' }, { status: 404 })
         }
 
         const { productId, quantity } = await req.json()
@@ -53,15 +61,23 @@ export async function POST(req: Request) {
 
         // Create new cart if none exists
         if (!cart) {
-            cart = await prisma.cart.create({
-                data: {
-                    user: {
-                        connect: {
-                            id: session.user.id
+            try {
+                cart = await prisma.cart.create({
+                    data: {
+                        user: {
+                            connect: {
+                                id: session.user.id
+                            }
                         }
                     }
-                }
-            })
+                })
+            } catch (error) {
+                console.error("Failed to create cart:", error)
+                return NextResponse.json(
+                    { error: 'Failed to create cart' },
+                    { status: 500 }
+                )
+            }
         }
 
         // Add or update cart item

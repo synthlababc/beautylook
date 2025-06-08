@@ -1,11 +1,11 @@
 "use client";
 
 import { useState, useEffect } from "react";
+import { useRouter } from "next/navigation";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import * as z from "zod"; // ✅ 正确导入 zod
 import {
-    PayPalScriptProvider,
     PayPalButtons,
 } from "@paypal/react-paypal-js";
 import {
@@ -63,13 +63,13 @@ interface OnApproveData {
 }
 
 export default function CheckoutPage() {
+    const router = useRouter();
     const [cart, setCart] = useState<CartResponse | null>(null);
     const [loadingCart, setLoadingCart] = useState<boolean>(true);
     const [paypalLoading, setPaypalLoading] = useState<boolean>(false);
 
     const {
         register,
-        handleSubmit,
         trigger,
         getValues,
         setValue,
@@ -150,7 +150,7 @@ export default function CheckoutPage() {
             const result = await response.json();
 
             if (result.status === "COMPLETED") {
-                window.location.href = "/order/success";
+                router.push(`/order/success?orderId=${result.order.id}`);
             } else {
                 console.error("Payment not completed:", result);
             }

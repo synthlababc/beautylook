@@ -20,7 +20,7 @@ export async function POST(req: NextRequest) {
         const accessToken = await getPayPalAccessToken();
 
         // 2. 调用订单捕获接口
-        const captureRes = await fetch(`${baseUrl}/v2/checkout/order/${orderID}/capture`, {
+        const captureRes = await fetch(`${baseUrl}/v2/checkout/orders/${orderID}/capture`, {
             method: "POST",
             headers: {
                 Authorization: `Bearer ${accessToken}`,

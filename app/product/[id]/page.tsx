@@ -10,6 +10,7 @@ import { Button } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
 import { Minus, Plus } from "lucide-react";
 import { useRouter } from "next/navigation";
+import ImageViewer from "@/components/commerce-ui/image-viewer-basic";
 
 interface Product {
     id: number;
@@ -82,7 +83,7 @@ export default function ProductPage() {
     return (
         <div className="container mx-auto px-4 py-10 grid gap-10 md:grid-cols-2">
             {/* 左侧图片 */}
-            <div className="flex justify-center items-start">
+            {/* <div className="flex justify-center items-start">
                 <Image
                     src={product.image}
                     alt={product.name}
@@ -90,6 +91,13 @@ export default function ProductPage() {
                     height={500}
                     className="rounded-2xl shadow object-contain max-h-[500px] w-auto"
                 />
+            </div> */}
+
+            {/* 左侧图片 */}
+            <div className="relative aspect-square overflow-hidden rounded-xl flex items-center justify-center ml-auto" style={{ maxHeight: '500px', maxWidth: '500px' }}>
+                {product.image && (
+                    <ImageViewer imageUrl={product.image} className="w-full h-auto object-contain" />
+                )}
             </div>
 
             {/* 右侧信息 */}

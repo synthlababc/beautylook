@@ -7,7 +7,7 @@ import { useEffect, useState } from "react";
 import { useSession } from "next-auth/react";      // ✅ 使用 next-auth 检查登录状态
 
 export default function CartIcon() {
-    const { data: session, status } = useSession(); // status: "loading" | "authenticated" | "unauthenticated"
+    const { status } = useSession(); // status: "loading" | "authenticated" | "unauthenticated"
     const [itemCount, setItemCount] = useState(0);
 
     useEffect(() => {

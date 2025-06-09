@@ -7,7 +7,7 @@ import StarRatingFractions from "@/components/commerce-ui/star-rating-fractions"
 import { Button } from "@/components/ui/button";
 
 const DEFAULT_IMAGE_URL =
-  "https://raw.githubusercontent.com/stackzero-labs/ui/refs/heads/main/public/placeholders/headphone-4.jpg";
+  "/logo.png";
 
 interface ProductCard_02Props {
   id?: number;
@@ -33,15 +33,15 @@ function ProductCard_02({
   discount = "20% OFF",
   hasShipping = true,
   imageUrl = DEFAULT_IMAGE_URL,
-  inStock = true,
-  onAddToCart = () => { },
+  // inStock = true,
+  // onAddToCart = () => { },
   onBuyNow,
   prefix = "$",
   price = 39.59,
   rating = 4.45,
   reviewCount = 362,
   shippingText = "Free Shipping",
-  stockCount = 256,
+  // stockCount = 256,
   title = "AeroTune X9",
 }: ProductCard_02Props = {}) {
   const router = useRouter();
@@ -95,7 +95,15 @@ function ProductCard_02({
         </div>
 
         <div className="flex flex-col gap-2">
-          {inStock ? (
+          {hasShipping && (
+            <div className="flex items-center gap-2">
+              <div className="rounded-md bg-green-100 px-2 py-1 text-sm font-semibold text-green-600">
+                {shippingText}
+              </div>
+              <p className="text-muted-foreground text-sm">on all orders</p>
+            </div>
+          )}
+          {/* {inStock ? (
             <div className="flex items-center gap-2">
               <div className="rounded-md bg-green-100 px-2 py-1 text-sm font-semibold text-green-600">
                 In Stock
@@ -118,7 +126,7 @@ function ProductCard_02({
               </a>{" "}
               on all orders
             </p>
-          )}
+          )} */}
         </div>
 
         <div className="flex flex-col md:flex-row gap-4">

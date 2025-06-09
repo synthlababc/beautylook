@@ -151,7 +151,7 @@ export default function ProductPage() {
             {/* 产品详情 markdown */}
             <div className="md:col-span-2">
                 <Separator className="my-10" />
-                <div className="prose md:prose-lg max-w-none">
+                <div className="prose md:prose-lg max-w-4xl mx-auto"> {/* 确保这部分居中 */}
                     <ReactMarkdown
                         remarkPlugins={[remarkGfm]}
                         components={{

@@ -26,7 +26,7 @@ function ProductCard_04({
   currencyPrefix = "$",
   imageUrl = DEFAULT_IMAGE_URL,
   maxRating = 5,
-  onAddToCart = () => { },
+  // onAddToCart = () => { },
   onBuyNow = () => { },
   originalPrice = 299,
   productName = "Smart Watch Pro",

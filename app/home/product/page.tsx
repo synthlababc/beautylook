@@ -3,6 +3,7 @@ import { useState, useEffect } from 'react'
 import ProductCard_02 from "@/components/commerce-ui/product-card-02"
 import { Button } from "@/components/ui/button"
 import Link from "next/link"
+import { Separator } from "@/components/ui/separator"
 
 type Product = {
     id: number;  // 改为 number 以匹配 API
@@ -86,8 +87,10 @@ export default function ProductPage() {
                 </div>
             </div>
 
+            <Separator />
+
             {/* New Products Section */}
-            <div className="mb-12">
+            <div className="mb-12 mt-10">
                 <h2 className="text-2xl font-bold text-center mb-6">New Products</h2>
                 <div className="flex justify-center">
                     <div className="grid grid-cols-1 gap-6 max-w-4xl">

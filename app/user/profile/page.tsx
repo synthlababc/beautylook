@@ -3,7 +3,7 @@
 import { useSession } from "next-auth/react";
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
-import { Button } from "@/components/ui/button";
+// import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
 
@@ -27,16 +27,16 @@ export default function ProfilePage() {
         }
     }, [session]);
 
-    const handleUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
-        const file = e.target.files?.[0];
-        if (file) {
-            const reader = new FileReader();
-            reader.onload = (e) => {
-                setAvatarUrl(e.target?.result as string);
-            };
-            reader.readAsDataURL(file);
-        }
-    };
+    // const handleUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
+    //     const file = e.target.files?.[0];
+    //     if (file) {
+    //         const reader = new FileReader();
+    //         reader.onload = (e) => {
+    //             setAvatarUrl(e.target?.result as string);
+    //         };
+    //         reader.readAsDataURL(file);
+    //     }
+    // };
 
     if (status === "loading") {
         return <div className="p-4">Loading...</div>;

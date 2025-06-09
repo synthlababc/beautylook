@@ -1,9 +1,9 @@
 import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
-  /* config options here */
+  basePath: '/micro', // 替换为你自己的子路径，例如：/my-app
   images: {
-    domains: ['yanxuan.nosdn.127.net'], // 添加你要加载图片的域名
+    domains: ['beautylook.top'], // 允许加载的图片域名
   },
 };
 

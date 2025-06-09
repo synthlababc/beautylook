@@ -5,8 +5,6 @@ import ImageViewer from "@/components/commerce-ui/image-viewer-basic";
 import StarRating_Fractions from "@/components/commerce-ui/star-rating-fractions";
 import { Button } from "@/components/ui/button";
 
-const DEFAULT_IMAGE_URL = ""
-
 interface ProductCard_04Props {
   imageUrl?: string;
   tagText?: string;
@@ -23,7 +21,7 @@ interface ProductCard_04Props {
 
 function ProductCard_04({
   currencyPrefix = "$",
-  imageUrl = DEFAULT_IMAGE_URL,
+  imageUrl,
   maxRating = 5,
   // onAddToCart = () => { },
   onBuyNow = () => { },
@@ -53,10 +51,11 @@ function ProductCard_04({
       <div className="relative bg-accent dark:bg-accent/30 p-6">
         <div className="absolute -bottom-10 left-1/2 h-40 w-40 -translate-x-1/2 transform rounded-full bg-primary/20 blur-3xl" />
         <div className="relative w-full aspect-[4/3] overflow-hidden rounded-lg transition-transform duration-500 group-hover:scale-105">
-          <ImageViewer
+          {/* <ImageViewer
             imageUrl={imageUrl}
             classNameThumbnailViewer="w-full h-full object-cover rounded-lg"
-          />
+          /> */}
+          {imageUrl && <ImageViewer imageUrl={imageUrl} className="w-full h-full object-cover" />}
         </div>
       </div>
 

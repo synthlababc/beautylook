@@ -1,5 +1,6 @@
 "use client";
 
+import { useRouter } from "next/navigation";
 import ImageViewer from "@/components/commerce-ui/image-viewer-basic";
 import PriceFormat from "@/components/commerce-ui/price-format-basic";
 import StarRatingFractions from "@/components/commerce-ui/star-rating-fractions";
@@ -9,6 +10,7 @@ const DEFAULT_IMAGE_URL =
   "https://raw.githubusercontent.com/stackzero-labs/ui/refs/heads/main/public/placeholders/headphone-4.jpg";
 
 interface ProductCard_02Props {
+  id?: number;
   imageUrl?: string;
   discount?: string | null;
   title?: string;
@@ -26,13 +28,14 @@ interface ProductCard_02Props {
 }
 
 function ProductCard_02({
-  description = "Experience next-level audio with the AeroTune X9, the world's most advanced wireless headset designed for audiophiles, gamers, and music lovers alike. With QuantumBass™ technology, every beat, bass drop, and whisper is delivered in studio-quality precision.",
+  id,
+  description = "Experience next-level audio with the AeroTune X9...",
   discount = "20% OFF",
   hasShipping = true,
   imageUrl = DEFAULT_IMAGE_URL,
   inStock = true,
-  onAddToCart = () => {},
-  onBuyNow = () => {},
+  onAddToCart = () => { },
+  onBuyNow,
   prefix = "$",
   price = 39.59,
   rating = 4.45,
@@ -41,47 +44,75 @@ function ProductCard_02({
   stockCount = 256,
   title = "AeroTune X9",
 }: ProductCard_02Props = {}) {
+  const router = useRouter();
+
+  const handleCardClick = () => {
+    if (id) {
+      router.push(`/product/${id}`);
+    }
+  };
+
+  const handleBuyNowClick = (e: React.MouseEvent<HTMLButtonElement>) => {
+    e.stopPropagation(); // 防止冒泡触发卡片跳转
+    if (id) {
+      router.push(`/product/${id}`);
+    }
+    if (onBuyNow) {
+      onBuyNow(); // 可选调用
+    }
+  };
+
   return (
-    <div className="bg-card grid max-w-screen-lg grid-cols-4 gap-6 rounded-lg border p-4">
-      <div className="relative col-span-4 w-full md:col-span-2">
+    <div
+      onClick={handleCardClick}
+      className="bg-white dark:bg-zinc-900 max-w-4xl mx-auto rounded-2xl border p-6 shadow-lg grid grid-cols-1 md:grid-cols-2 gap-6 cursor-pointer hover:shadow-xl transition-shadow"
+    >
+      <div className="relative aspect-square overflow-hidden rounded-xl">
         {discount && (
-          <div className="absolute top-2 left-2 z-10 w-fit rounded-lg bg-purple-500/80 p-2">
-            <p className="text-xs font-semibold">{discount}</p>
+          <div className="absolute top-2 left-2 z-10 w-fit rounded-lg bg-purple-500/80 px-3 py-1 text-xs font-semibold text-white">
+            {discount}
           </div>
         )}
-        <ImageViewer imageUrl={imageUrl} />
+        <ImageViewer imageUrl={imageUrl} className="w-full h-full object-cover" />
       </div>
 
-      <div className="col-span-4 flex flex-col gap-6 md:col-span-2">
+      <div className="flex flex-col gap-6">
         <div className="flex flex-col gap-2">
-          <p className="text-3xl font-semibold">{title}</p>
-          <div className="flex flex-row flex-wrap items-center gap-2">
+          <p className="text-2xl font-bold">{title}</p>
+          <div className="flex items-center gap-2 text-sm text-muted-foreground">
             <StarRatingFractions readOnly value={rating} />
-            <p className="text-lg">({rating})</p>
-            <p className="text-muted-foreground">{reviewCount} reviews</p>
+            <span>({rating})</span>
+            <span>· {reviewCount} reviews</span>
           </div>
-          <p className="text-muted-foreground text-base">{description}</p>
+          <PriceFormat
+            prefix={prefix}
+            value={price}
+            className="text-3xl font-semibold text-primary"
+          />
+          <p className="text-muted-foreground text-base whitespace-pre-line leading-relaxed">
+            {description}
+          </p>
         </div>
 
         <div className="flex flex-col gap-2">
           {inStock ? (
-            <div className="flex flex-row items-center gap-2">
-              <div className="w-fit rounded-lg border border-green-500 bg-green-500/30 px-2 py-1 text-sm font-semibold text-green-500 uppercase dark:border-green-300 dark:text-green-300">
+            <div className="flex items-center gap-2">
+              <div className="rounded-md bg-green-100 px-2 py-1 text-sm font-semibold text-green-600">
                 In Stock
               </div>
-              <p className="text-muted-foreground">+{stockCount} in stocks</p>
+              <p className="text-muted-foreground text-sm">+{stockCount} in stock</p>
             </div>
           ) : (
-            <div className="w-fit rounded-lg border border-red-500 bg-red-500/30 px-2 py-1 text-sm font-semibold text-red-500 uppercase dark:border-red-300 dark:text-red-300">
+            <div className="rounded-md bg-red-100 px-2 py-1 text-sm font-semibold text-red-600">
               Out of Stock
             </div>
           )}
 
           {hasShipping && (
-            <p>
+            <p className="text-sm text-muted-foreground">
               <a
                 href="#"
-                className="semibold underline underline-offset-4 opacity-80 hover:opacity-100"
+                className="font-semibold underline underline-offset-2 hover:opacity-100 opacity-80"
               >
                 {shippingText}
               </a>{" "}
@@ -90,22 +121,8 @@ function ProductCard_02({
           )}
         </div>
 
-        <PriceFormat
-          prefix={prefix}
-          value={price}
-          className="text-4xl font-semibold"
-        />
-
-        <div className="flex flex-row flex-wrap gap-4">
-          <Button
-            variant="outline"
-            size="lg"
-            className="w-full md:w-fit"
-            onClick={onAddToCart}
-          >
-            Add to cart
-          </Button>
-          <Button size="lg" className="w-full md:w-fit" onClick={onBuyNow}>
+        <div className="flex flex-col md:flex-row gap-4">
+          <Button size="lg" className="w-full" onClick={handleBuyNowClick}>
             Buy now
           </Button>
         </div>

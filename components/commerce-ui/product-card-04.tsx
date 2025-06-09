@@ -37,7 +37,7 @@ function ProductCard_04({
 }: ProductCard_04Props = {}) {
   return (
     <div className="group relative flex w-[320px] flex-col overflow-hidden rounded-xl border border-gray-200 bg-white shadow-sm transition-all duration-300 hover:shadow-md dark:border-gray-800 dark:bg-gray-900">
-      {/* Gradient badge  */}
+      {/* Gradient badge */}
       {tagText && (
         <div className="absolute top-3 left-3 z-10">
           <span className="relative inline-block rounded-full bg-primary px-3 py-1.5 text-xs font-semibold text-primary-foreground">
@@ -51,12 +51,12 @@ function ProductCard_04({
       )}
 
       {/* Image container with background glow effect */}
-      <div className="relative overflow-hidden bg-accent p-6 dark:bg-accent/30">
-        <div className="absolute -bottom-10 left-1/2 h-40 w-40 -translate-x-1/2 transform rounded-full bg-primary/20 blur-3xl"></div>
-        <div className="transition-transform duration-500 group-hover:scale-105">
+      <div className="relative bg-accent dark:bg-accent/30 p-6">
+        <div className="absolute -bottom-10 left-1/2 h-40 w-40 -translate-x-1/2 transform rounded-full bg-primary/20 blur-3xl" />
+        <div className="relative w-full aspect-[4/3] overflow-hidden rounded-lg transition-transform duration-500 group-hover:scale-105">
           <ImageViewer
             imageUrl={imageUrl}
-            classNameThumbnailViewer="rounded-lg object-contain h-[180px] mx-auto"
+            classNameThumbnailViewer="w-full h-full object-cover rounded-lg"
           />
         </div>
       </div>
@@ -68,7 +68,6 @@ function ProductCard_04({
             {productName}
           </h3>
 
-          {/* Star rating component */}
           <div className="mb-2 flex items-center">
             <StarRating_Fractions
               value={rating}
@@ -94,11 +93,7 @@ function ProductCard_04({
             classNameSalePrice="text-2xl font-bold text-primary dark:text-primary"
           />
           <p className="mt-1 inline-flex items-center text-sm text-green-600 dark:text-green-400">
-            <svg
-              className="mr-1 h-4 w-4"
-              fill="currentColor"
-              viewBox="0 0 20 20"
-            >
+            <svg className="mr-1 h-4 w-4" fill="currentColor" viewBox="0 0 20 20">
               <path
                 fillRule="evenodd"
                 d="M10 18a8 8 0 100-16 8 8 0 000 16zm1-12a1 1 0 10-2 0v4a1 1 0 00.293.707l2.828 2.829a1 1 0 101.415-1.415L11 9.586V6z"
@@ -109,14 +104,11 @@ function ProductCard_04({
           </p>
         </div>
 
+        {/* Buttons */}
         <div className="mt-2 flex flex-col gap-3">
-          <Button
-            variant="outline"
-            onClick={onAddToCart}
-            className="w-full border-gray-300 bg-white text-gray-800 transition-all duration-200 hover:border-indigo-500 hover:bg-gray-50 dark:border-gray-700 dark:bg-gray-800 dark:text-gray-200 dark:hover:border-indigo-500 dark:hover:bg-gray-700"
-          >
+          {/* <Button variant="outline" onClick={onAddToCart} className="w-full">
             Add to cart
-          </Button>
+          </Button> */}
           <Button
             onClick={onBuyNow}
             className="w-full bg-primary text-primary-foreground transition-all hover:bg-primary/90"

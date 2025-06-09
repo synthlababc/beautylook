@@ -1,15 +1,31 @@
 "use client";
 
 import { useSession } from "next-auth/react";
-import { useState } from "react";
+import { useEffect, useState } from "react";
+import { useRouter } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
 
 export default function ProfilePage() {
-    const { data: session } = useSession();
-    const [name, setName] = useState(session?.user?.name || "");
-    const [avatarUrl, setAvatarUrl] = useState(session?.user?.image || "");
+    const { data: session, status } = useSession();
+    const [name, setName] = useState("");
+    const [avatarUrl, setAvatarUrl] = useState("");
+    const router = useRouter();
+
+    // ⚠️ 用户未登录跳转
+    useEffect(() => {
+        if (status === "unauthenticated") {
+            router.push("/login"); // 或你自己的登录路径
+        }
+    }, [status, router]);
+
+    useEffect(() => {
+        if (session) {
+            setName(session.user?.name || "");
+            setAvatarUrl(session.user?.image || "");
+        }
+    }, [session]);
 
     const handleUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
         const file = e.target.files?.[0];
@@ -22,20 +38,22 @@ export default function ProfilePage() {
         }
     };
 
+    if (status === "loading") {
+        return <div className="p-4">Loading...</div>;
+    }
+
     return (
         <div className="flex min-h-screen bg-background">
-            {/* 主内容区域 - 紧贴侧边栏 */}
-            <main className="flex-1 px-4 py-4 ml-0"> {/* 移除了md:ml-64，只保留ml-0 */}
-                <div className="w-full space-y-4"> {/* 减小垂直间距 */}
-                    <h1 className="text-xl font-bold">User Profile</h1> {/* 减小标题大小 */}
+            <main className="flex-1 px-4 py-4 ml-0">
+                <div className="w-full space-y-4">
+                    <h1 className="text-xl font-bold">User Profile</h1>
 
-                    {/* 紧凑的头像区域 */}
-                    <div className="flex items-center gap-3"> {/* 改为行内布局，减小间距 */}
-                        <Avatar className="h-16 w-16"> {/* 减小头像尺寸 */}
+                    <div className="flex items-center gap-3">
+                        <Avatar className="h-16 w-16">
                             <AvatarImage src={avatarUrl} />
                             <AvatarFallback>{name.charAt(0)}</AvatarFallback>
                         </Avatar>
-                        <label
+                        {/* <label
                             htmlFor="avatar-upload"
                             className="cursor-pointer text-blue-500 hover:text-blue-600 underline text-sm"
                         >
@@ -47,13 +65,12 @@ export default function ProfilePage() {
                                 onChange={handleUpload}
                                 className="hidden"
                             />
-                        </label>
+                        </label> */}
                     </div>
 
-                    {/* 紧凑的表单区域 */}
-                    <div className="space-y-3"> {/* 减小表单项间距 */}
+                    <div className="space-y-3">
                         <div>
-                            <label className="block text-sm mb-1">Email</label> {/* 简化label样式 */}
+                            <label className="block text-sm mb-1">Email</label>
                             <Input
                                 value={session?.user?.email || ""}
                                 disabled
@@ -64,14 +81,14 @@ export default function ProfilePage() {
                             <label className="block text-sm mb-1">Name</label>
                             <Input
                                 value={name}
+                                disabled
                                 onChange={(e) => setName(e.target.value)}
                                 className="w-full max-w-xl"
                             />
                         </div>
                     </div>
 
-                    {/* 紧凑的按钮 */}
-                    <Button className="w-full max-w-xs">Save Changes</Button> {/* 限制按钮宽度 */}
+                    {/* <Button className="w-full max-w-xs">Save Changes</Button> */}
                 </div>
             </main>
         </div>

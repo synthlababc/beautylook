@@ -9,6 +9,7 @@ import {
     TableHeader,
     TableRow,
 } from "@/components/ui/table";
+import { useRouter } from 'next/navigation'
 
 // 定义数据类型
 interface Product {
@@ -58,6 +59,7 @@ export default function OrderPage() {
     const [loading, setLoading] = useState(true);
     const [page, setPage] = useState(1);
     const pageSize = 10;
+    const router = useRouter()
 
     useEffect(() => {
         const fetchOrders = async () => {
@@ -67,6 +69,9 @@ export default function OrderPage() {
 
             if (res.ok) {
                 setData(result);
+            } else if (res.status === 401) {
+                router.push('/login')
+                return
             } else {
                 console.error("Failed to fetch orders:", result.error);
             }

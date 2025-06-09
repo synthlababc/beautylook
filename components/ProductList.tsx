@@ -309,8 +309,8 @@ export default function ProductListPage() {
                                             reviewCount={100}
                                             tagText={product.status === 'NEW' ? 'NEW' : product.status === 'HOT' ? 'HOT' : ''}
                                             currencyPrefix="$"
-                                            onAddToCart={() => console.log("Add to cart:", product.id)}
-                                            onBuyNow={() => console.log("Buy now:", product.id)}
+                                        // onAddToCart={() => console.log("Add to cart:", product.id)}
+                                        // onBuyNow={() => console.log("Buy now:", product.id)}
                                         />
                                     </div>
                                 ))}

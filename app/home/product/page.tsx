@@ -1,7 +1,6 @@
 'use client'
 import { useState, useEffect } from 'react'
 import ProductCard_02 from "@/components/commerce-ui/product-card-02"
-import ProductCard_04 from "@/components/commerce-ui/product-card-04"
 import { Button } from "@/components/ui/button"
 import Link from "next/link"
 
@@ -40,12 +39,12 @@ export default function ProductPage() {
         const fetchProducts = async () => {
             try {
                 // 获取热门产品
-                const hotResponse = await fetch('/api/products?status=HOT&limit=3')
+                const hotResponse = await fetch('/api/products?status=HOT&limit=1')
                 if (!hotResponse.ok) throw new Error('Failed to fetch hot products')
                 const hotData: ApiResponse = await hotResponse.json()
 
                 // 获取新产品
-                const newResponse = await fetch('/api/products?status=NEW&limit=6')
+                const newResponse = await fetch('/api/products?status=NEW&limit=1')
                 if (!newResponse.ok) throw new Error('Failed to fetch new products')
                 const newData: ApiResponse = await newResponse.json()
 
@@ -74,6 +73,7 @@ export default function ProductPage() {
                         {hotProducts.map((product) => (
                             <ProductCard_02
                                 key={product.id}
+                                id={product.id}
                                 title={product.name}
                                 description={product.description}
                                 price={product.price}
@@ -89,28 +89,26 @@ export default function ProductPage() {
             {/* New Products Section */}
             <div className="mb-12">
                 <h2 className="text-2xl font-bold text-center mb-6">New Products</h2>
-                <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6">
-                    {newProducts.map((product) => (
-                        <ProductCard_04
-                            key={product.id}
-                            productName={product.name}
-                            imageUrl={product.image}
-                            originalPrice={product.price}
-                            salePrice={product.price * 0.9}
-                            rating={product.rating || 4.5}
-                            reviewCount={product.reviewCount || 100}
-                            tagText={product.status === 'NEW' ? 'NEW' : product.status === 'HOT' ? 'HOT' : ''}
-                            currencyPrefix="$"
-                            maxRating={5}
-                            onAddToCart={() => console.log("Add to cart:", product.id)}
-                            onBuyNow={() => console.log("Buy now:", product.id)}
-                        />
-                    ))}
+                <div className="flex justify-center">
+                    <div className="grid grid-cols-1 gap-6 max-w-4xl">
+                        {newProducts.map((product) => (
+                            <ProductCard_02
+                                key={product.id}
+                                id={product.id}
+                                title={product.name}
+                                description={product.description}
+                                price={product.price}
+                                imageUrl={product.image}
+                                rating={product.rating || 4.5}
+                                reviewCount={product.reviewCount || 100}
+                            />
+                        ))}
+                    </div>
                 </div>
             </div>
 
             <div className="flex justify-center mt-8">
-                <Link href="/products/all">
+                <Link href="/product">
                     <Button variant="default" size="lg">View All Products</Button>
                 </Link>
             </div>

@@ -1,37 +1,36 @@
-'use client'
+"use client";
 
-import Link from 'next/link'
-import { ShoppingCart } from 'lucide-react'
-import { Button } from '@/components/ui/button'
-import { useEffect, useState } from 'react'
+import Link from "next/link";
+import { ShoppingCart } from "lucide-react";
+import { Button } from "@/components/ui/button";
+import { useEffect, useState } from "react";
+import { useSession } from "next-auth/react";      // ✅ 使用 next-auth 检查登录状态
 
 export default function CartIcon() {
-    const [itemCount, setItemCount] = useState(0)
+    const { data: session, status } = useSession(); // status: "loading" | "authenticated" | "unauthenticated"
+    const [itemCount, setItemCount] = useState(0);
 
     useEffect(() => {
+        // 仅当已经确定用户已登录时才拉取购物车
+        if (status !== "authenticated") {
+            setItemCount(0);            // 未登录或加载中，保持 0
+            return;
+        }
+
         const fetchCartCount = async () => {
             try {
-                const res = await fetch('/api/cart', {
-                    credentials: 'include'
-                })
-
-                if (res.status === 401) {
-                    return
-                }
-
-                if (!res.ok) {
-                    throw new Error('Failed to fetch cart count')
-                }
-
-                const data = await res.json()
-                setItemCount(data?.items?.length || 0)
+                const res = await fetch("/api/cart", { credentials: "include" });
+                if (!res.ok) throw new Error("Failed to fetch cart count");
+                const data = await res.json();
+                setItemCount(data?.items?.length || 0);
             } catch (error) {
-                console.error('Failed to fetch cart count', error)
-                setItemCount(0)
+                console.error(error);
+                setItemCount(0);
             }
-        }
-        fetchCartCount()
-    }, [])
+        };
+
+        fetchCartCount();
+    }, [status]);
 
     return (
         <Button asChild variant="ghost" size="icon" className="relative">
@@ -44,5 +43,5 @@ export default function CartIcon() {
                 )}
             </Link>
         </Button>
-    )
+    );
 }

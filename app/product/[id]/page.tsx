@@ -95,7 +95,10 @@ export default function ProductPage() {
                     <p className="mt-2 text-2xl font-semibold">
                         $ {parseFloat(product.price).toFixed(2)}
                     </p>
-                    <p className="text-xl text-muted-foreground">
+                    {/* <p className="text-xl text-muted-foreground">
+                        {product.description}
+                    </p> */}
+                    <p className="text-muted-foreground text-base whitespace-pre-line leading-relaxed">
                         {product.description}
                     </p>
                 </div>

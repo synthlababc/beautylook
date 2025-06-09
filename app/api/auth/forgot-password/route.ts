@@ -1,6 +1,6 @@
 // app/api/auth/forgot-password/route.ts
 import { NextRequest } from "next/server";
-import prisma from "@/lib/prisma";
+import { prisma } from "@/lib/prisma";
 import { randomBytes } from "crypto";
 import { Resend } from "resend";
 

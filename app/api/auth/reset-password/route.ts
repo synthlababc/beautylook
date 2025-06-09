@@ -1,7 +1,7 @@
 // app/api/auth/reset-password/route.ts
 import { hash } from "bcrypt";
 import { NextRequest } from "next/server";
-import prisma from "@/lib/prisma";
+import { prisma } from "@/lib/prisma";
 
 export async function POST(req: NextRequest) {
   const { token, password } = await req.json();

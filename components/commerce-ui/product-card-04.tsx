@@ -1,12 +1,11 @@
 "use client";
 
 import ImageViewer from "@/components/commerce-ui/image-viewer-basic";
-import PriceFormatSale from "@/components/commerce-ui/price-format-sale";
+// import PriceFormatSale from "@/components/commerce-ui/price-format-sale";
 import StarRating_Fractions from "@/components/commerce-ui/star-rating-fractions";
 import { Button } from "@/components/ui/button";
 
-const DEFAULT_IMAGE_URL =
-  "https://raw.githubusercontent.com/stackzero-labs/ui/refs/heads/main/public/placeholders/smartwatch-01.jpg";
+const DEFAULT_IMAGE_URL = ""
 
 interface ProductCard_04Props {
   imageUrl?: string;
@@ -28,7 +27,7 @@ function ProductCard_04({
   maxRating = 5,
   // onAddToCart = () => { },
   onBuyNow = () => { },
-  originalPrice = 299,
+  // originalPrice = 299,
   productName = "Smart Watch Pro",
   rating = 4.5,
   reviewCount = 128,
@@ -84,14 +83,19 @@ function ProductCard_04({
 
         {/* Price */}
         <div className="mt-1">
-          <PriceFormatSale
+          <div className="flex items-center space-x-2">
+            <div className="text-2xl font-bold text-primary dark:text-primary">{currencyPrefix}{salePrice}</div>
+            <div className="text-lg font-semibold text-gray-600 dark:text-gray-300">{currencyPrefix}{salePrice / 0.8}</div>
+            <div className="rounded-sm bg-green-500/50 p-1 text-sm font-medium">Save 20%</div>
+          </div>
+          {/* <PriceFormatSale
             prefix={currencyPrefix}
             originalPrice={originalPrice}
             salePrice={salePrice}
             showSavePercentage
             className="text-lg font-semibold text-gray-600 dark:text-gray-300"
             classNameSalePrice="text-2xl font-bold text-primary dark:text-primary"
-          />
+          /> */}
           <p className="mt-1 inline-flex items-center text-sm text-green-600 dark:text-green-400">
             <svg className="mr-1 h-4 w-4" fill="currentColor" viewBox="0 0 20 20">
               <path

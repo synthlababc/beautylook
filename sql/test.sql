@@ -1,1 +1,1 @@
-INSERT INTO "Category" (name) VALUES ('Headphones');
+INSERT INTO "Category" (name) VALUES ('Micro Infusion System');

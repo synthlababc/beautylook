@@ -13,9 +13,6 @@ import {
 import { MinusCircle, PlusCircle, X } from "lucide-react";
 import { TransformComponent, TransformWrapper } from "react-zoom-pan-pinch";
 
-const DEFAULT_PLACEHOLDER_URL =
-  "https://raw.githubusercontent.com/stackzero-labs/ui/refs/heads/main/public/placeholders/headphone-2.jpg";
-
 interface ImageViewerProps {
   className?: string;
   classNameImageViewer?: string;
@@ -35,12 +32,12 @@ const ImageViewer_Basic = ({
   imageTitle,
   imageUrl,
   thumbnailUrl,
-  placeholderUrl = DEFAULT_PLACEHOLDER_URL,
+  // placeholderUrl,
   showControls = true,
 }: ImageViewerProps) => {
   const handleImgError = (event: React.SyntheticEvent<HTMLImageElement>) => {
     console.error("Image failed to load", event.currentTarget.src);
-    event.currentTarget.src = placeholderUrl;
+    // event.currentTarget.src = placeholderUrl;
   };
 
   return (

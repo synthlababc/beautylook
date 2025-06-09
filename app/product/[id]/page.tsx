@@ -60,6 +60,10 @@ export default function ProductPage() {
             });
 
             if (!res.ok) {
+                if (res.status === 401) {
+                    router.push('/login')
+                    return
+                }
                 throw new Error("Failed to add item to cart");
             }
 
@@ -92,9 +96,14 @@ export default function ProductPage() {
             <div className="space-y-6">
                 <div>
                     <h1 className="text-3xl font-bold">{product.name}</h1>
-                    <p className="mt-2 text-2xl font-semibold">
+                    {/* <p className="mt-2 text-2xl font-semibold">
                         $ {parseFloat(product.price).toFixed(2)}
-                    </p>
+                    </p> */}
+                    <div className="flex items-center space-x-2 m-3">
+                        <div className="text-3xl font-semibold text-primary">${product.price}</div>
+                        <div className="text-3xl font-semibold text-gray-500 line-through">${Math.round(parseFloat(product.price) / 0.8)}</div>
+                        <div className="bg-green-200 text-green-800 px-2 py-1 rounded-full text-sm">Save 20%</div>
+                    </div>
                     {/* <p className="text-xl text-muted-foreground">
                         {product.description}
                     </p> */}

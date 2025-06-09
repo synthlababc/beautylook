@@ -2,12 +2,12 @@
 
 import { useRouter } from "next/navigation";
 import ImageViewer from "@/components/commerce-ui/image-viewer-basic";
-import PriceFormat from "@/components/commerce-ui/price-format-basic";
+// import PriceFormat from "@/components/commerce-ui/price-format-basic";
 import StarRatingFractions from "@/components/commerce-ui/star-rating-fractions";
 import { Button } from "@/components/ui/button";
 
-const DEFAULT_IMAGE_URL =
-  "/logo.png";
+// const DEFAULT_IMAGE_URL =
+//   "/logo.png";
 
 interface ProductCard_02Props {
   id?: number;
@@ -32,7 +32,7 @@ function ProductCard_02({
   description = "Experience next-level audio with the AeroTune X9...",
   discount = "20% OFF",
   hasShipping = true,
-  imageUrl = DEFAULT_IMAGE_URL,
+  imageUrl,
   // inStock = true,
   // onAddToCart = () => { },
   onBuyNow,
@@ -73,7 +73,7 @@ function ProductCard_02({
             {discount}
           </div>
         )}
-        <ImageViewer imageUrl={imageUrl} className="w-full h-full object-cover" />
+        {imageUrl && <ImageViewer imageUrl={imageUrl} className="w-full h-full object-cover" />}
       </div>
 
       <div className="flex flex-col gap-6">
@@ -84,11 +84,17 @@ function ProductCard_02({
             <span>({rating})</span>
             <span>· {reviewCount} reviews</span>
           </div>
-          <PriceFormat
+          <div className="flex items-center space-x-2">
+            <div className="text-3xl font-semibold text-primary">{prefix}{price}</div>
+            <div className="text-3xl font-semibold text-gray-500 line-through">{prefix}{price / 0.8}</div>
+            <div className="bg-green-200 text-green-800 px-2 py-1 rounded-full text-sm">Save 20%</div>
+          </div>
+
+          {/* <PriceFormat
             prefix={prefix}
             value={price}
             className="text-3xl font-semibold text-primary"
-          />
+          /> */}
           <p className="text-muted-foreground text-base whitespace-pre-line leading-relaxed">
             {description}
           </p>

@@ -304,7 +304,7 @@ export default function ProductListPage() {
                                             productName={product.name}
                                             imageUrl={product.image || DEFAULT_IMAGE_URL}
                                             originalPrice={product.price}
-                                            salePrice={product.price * 0.9}
+                                            salePrice={product.price * 0.8}
                                             rating={4.5}
                                             reviewCount={100}
                                             tagText={product.status === 'NEW' ? 'NEW' : product.status === 'HOT' ? 'HOT' : ''}

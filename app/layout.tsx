@@ -18,13 +18,43 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "Unleash Your Youthful Glow",
-  description: "Our beauty products for your skin care",
+  title: "BeautyLook - Professional Skincare & Beauty Products",
+  description: "Discover premium skincare solutions and beauty devices. Shop our clinically-proven micro-infusion systems, serums and beauty tools for radiant, youthful skin.",
+  keywords: [
+    "skincare",
+    "beauty devices",
+    "micro-infusion",
+    "anti-aging",
+    "beauty products",
+    "professional skincare"
+  ],
+  openGraph: {
+    title: "BeautyLook - Professional Skincare & Beauty Products",
+    description: "Discover premium skincare solutions and beauty devices for radiant, youthful skin.",
+    url: "https://www.beautylook.top",
+    siteName: "BeautyLook",
+    images: [
+      {
+        url: "https://www.beautylook.top/logo.png",
+        width: 800,
+        height: 600,
+      },
+    ],
+    locale: "en_US",
+    type: "website",
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "BeautyLook - Professional Skincare & Beauty Products",
+    description: "Discover premium skincare solutions and beauty devices for radiant, youthful skin.",
+    images: ["https://www.beautylook.top/logo.png"],
+  },
   icons: {
     icon: [
-      { url: '/logo.png', type: 'image/png' }  // 只保留PNG格式的图标
+      { url: '/logo.png', type: 'image/png' }
     ]
-  }
+  },
+  metadataBase: new URL("https://www.beautylook.top")
 }
 
 export default function RootLayout({

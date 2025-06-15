@@ -1,7 +1,6 @@
 "use client";
 
 import ImageViewer from "@/components/commerce-ui/image-viewer-basic";
-// import PriceFormatSale from "@/components/commerce-ui/price-format-sale";
 import StarRating_Fractions from "@/components/commerce-ui/star-rating-fractions";
 import { Button } from "@/components/ui/button";
 
@@ -23,9 +22,7 @@ function ProductCard_04({
   currencyPrefix = "$",
   imageUrl,
   maxRating = 5,
-  // onAddToCart = () => { },
   onBuyNow = () => { },
-  // originalPrice = 299,
   productName = "Smart Watch Pro",
   rating = 4.5,
   reviewCount = 128,
@@ -33,7 +30,7 @@ function ProductCard_04({
   tagText = "LIMITED EDITION",
 }: ProductCard_04Props = {}) {
   return (
-    <div className="group relative flex w-[320px] flex-col overflow-hidden rounded-xl border border-gray-200 bg-white shadow-sm transition-all duration-300 hover:shadow-md dark:border-gray-800 dark:bg-gray-900">
+    <div className="group relative flex h-[600px] w-[320px] flex-col overflow-hidden rounded-xl border border-gray-200 bg-white shadow-sm transition-all duration-300 hover:shadow-md dark:border-gray-800 dark:bg-gray-900">
       {/* Gradient badge */}
       {tagText && (
         <div className="absolute top-3 left-3 z-10">
@@ -47,20 +44,21 @@ function ProductCard_04({
         </div>
       )}
 
-      {/* Image container with background glow effect */}
-      <div className="relative bg-accent dark:bg-accent/30 p-6">
+      {/* Image container with fixed height and no padding or background */}
+      <div className="h-[300px] relative overflow-hidden">
         <div className="absolute -bottom-10 left-1/2 h-40 w-40 -translate-x-1/2 transform rounded-full bg-primary/20 blur-3xl" />
-        <div className="relative w-full aspect-[4/3] overflow-hidden rounded-lg transition-transform duration-500 group-hover:scale-105">
-          {/* <ImageViewer
-            imageUrl={imageUrl}
-            classNameThumbnailViewer="w-full h-full object-cover rounded-lg"
-          /> */}
-          {imageUrl && <ImageViewer imageUrl={imageUrl} className="w-full h-full object-cover" />}
+        <div className="h-full w-full transition-transform duration-500 group-hover:scale-105">
+          {imageUrl && (
+            <ImageViewer
+              imageUrl={imageUrl}
+              className="h-full w-full object-cover"
+            />
+          )}
         </div>
       </div>
 
-      {/* Product details */}
-      <div className="flex flex-1 flex-col gap-4 p-5">
+      {/* Product details with fixed height */}
+      <div className="flex flex-col gap-4 p-5 h-[300px] justify-between">
         <div>
           <h3 className="mb-1 text-xl font-semibold tracking-tight text-gray-900 dark:text-gray-100">
             {productName}
@@ -83,19 +81,19 @@ function ProductCard_04({
         {/* Price */}
         <div className="mt-1">
           <div className="flex items-center space-x-2">
-            <div className="text-2xl font-bold text-primary dark:text-primary">{currencyPrefix}{salePrice}</div>
-            <div className="text-lg font-semibold text-gray-600 dark:text-gray-300">{currencyPrefix}{salePrice / 0.8}</div>
-            <div className="rounded-sm bg-green-500/50 p-1 text-sm font-medium">Save 20%</div>
+            <div className="text-2xl font-bold text-primary dark:text-primary">
+              {currencyPrefix}
+              {salePrice}
+            </div>
+            <div className="text-lg font-semibold text-gray-600 dark:text-gray-300 line-through">
+              {currencyPrefix}
+              {(salePrice / 0.8).toFixed(2)}
+            </div>
+            <div className="rounded-sm bg-green-500/50 p-1 text-sm font-medium">
+              Save 20%
+            </div>
           </div>
-          {/* <PriceFormatSale
-            prefix={currencyPrefix}
-            originalPrice={originalPrice}
-            salePrice={salePrice}
-            showSavePercentage
-            className="text-lg font-semibold text-gray-600 dark:text-gray-300"
-            classNameSalePrice="text-2xl font-bold text-primary dark:text-primary"
-          /> */}
-          <p className="mt-1 inline-flex items-center text-sm text-green-600 dark:text-green-400">
+          {/* <p className="mt-1 inline-flex items-center text-sm text-green-600 dark:text-green-400">
             <svg className="mr-1 h-4 w-4" fill="currentColor" viewBox="0 0 20 20">
               <path
                 fillRule="evenodd"
@@ -104,14 +102,11 @@ function ProductCard_04({
               />
             </svg>
             Ships within 24 hours
-          </p>
+          </p> */}
         </div>
 
         {/* Buttons */}
         <div className="mt-2 flex flex-col gap-3">
-          {/* <Button variant="outline" onClick={onAddToCart} className="w-full">
-            Add to cart
-          </Button> */}
           <Button
             onClick={onBuyNow}
             className="w-full bg-primary text-primary-foreground transition-all hover:bg-primary/90"

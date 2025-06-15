@@ -1,21 +1,12 @@
 import { Metadata } from "next";
 
-// interface Product {
-//     id: number;
-//     name: string;
-//     price: string;
-//     image: string;
-//     description: string;
-//     detail: string;
-//     currency: string;
-//     category: {
-//         name: string;
-//     };
-// }
-
 export async function generateMetadata({ params }: { params: Promise<{ id: string }> }): Promise<Metadata> {
     const resolvedParams = await params;
-    const product = await fetch(`https://www.beautylook.top/api/products/${resolvedParams.id}`).then(res => res.json());
+    const productId = resolvedParams.id;
+
+    // 获取产品数据
+    const productRes = await fetch(`https://www.beautylook.top/api/products/${productId}`);
+    const product = await productRes.json();
 
     return {
         title: `${product.name} | BeautyLook`,
@@ -27,7 +18,7 @@ export async function generateMetadata({ params }: { params: Promise<{ id: strin
         },
         keywords: [
             product.name,
-            product.category.name,
+            product.category?.name ?? "Uncategorized", // 可选链 + 默认值
             "beauty device",
             "skincare",
             "micro-infusion"
@@ -38,9 +29,7 @@ export async function generateMetadata({ params }: { params: Promise<{ id: strin
 export default function ProductLayout({
     children,
 }: {
-    children: React.ReactNode
+    children: React.ReactNode;
 }) {
-    return (
-        <>{children}</>
-    );
+    return <>{children}</>;
 }

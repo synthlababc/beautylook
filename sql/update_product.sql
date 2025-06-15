@@ -1,4 +1,22 @@
-ProductUPDATE public."Product"
+UPDATE public."Product"
+SET name = 'Glov Micro Infusion System Bundle + 3 Serums + 2 Needles'
+WHERE id = 2;
+
+UPDATE public."Product"
+SET description = $$
+Includes :
+(1) Glov Micro Infusion System
+(3) Glov Anti-Aging Serums
+(2) Sterile Needle Heads
+$$
+WHERE id = 2;
+
+UPDATE public."Product"
+SET image = '/micro/1+3.png'
+WHERE id = 2;
+
+
+UPDATE public."Product"
 SET detail = $$
 <!-- How It Works Section -->
 <div class="grid grid-cols-1 md:grid-cols-2 gap-6 my-8">

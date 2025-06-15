@@ -235,6 +235,7 @@ export default function ProductPage({ params }: { params: Promise<{ id: string }
                             width={50}
                             height={50}
                             className="mr-4"
+                            unoptimized
                         />
                         <div>
                             <p className="text-base font-medium">{product.name}</p>

@@ -6,17 +6,15 @@ import { getPayPalAccessToken, baseUrl } from "@/lib/paypal";
 
 export async function POST(request: Request) {
     const session = await getServerSession(authOptions);
-    if (!session) {
+
+    if (!session || !session.user || !session.user.id) {
         return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
-    }
-    if (!session.user?.id) {
-        return NextResponse.json({ error: "User not found" }, { status: 400 });
     }
 
     try {
         const { cartId, ...formData } = await request.json();
 
-        // 获取购物车信息
+        // 获取购物车信息（加锁避免并发修改）
         const cart = await prisma.cart.findUnique({
             where: { id: cartId },
             include: { items: { include: { product: true } } },
@@ -34,23 +32,9 @@ export async function POST(request: Request) {
         const totalAmountFormatted = totalAmount.toFixed(2);
         const fullName = `${formData.firstName || ""} ${formData.lastName || ""}`.trim();
 
-        // 创建地址记录
-        const address = await prisma.address.create({
-            data: {
-                userId: session.user.id!,
-                fullName: fullName,
-                phone: formData.phone,
-                address: formData.address,
-                city: formData.city,
-                country: "US",
-                isDefault: false,
-            },
-        });
-
         // ---------------------------
         // ✅ 调用 PayPal API 创建订单
         // ---------------------------
-        // 1. 获取 access_token
         const accessToken = await getPayPalAccessToken();
         const paypalRes = await fetch(`${baseUrl}/v2/checkout/orders`, {
             method: "POST",
@@ -81,42 +65,60 @@ export async function POST(request: Request) {
         const paypalOrderId = paypalData.id;
 
         // -------------------------------
-        // ✅ 保存订单到数据库
+        // ✅ 使用 Prisma Transaction 保证一致性
         // -------------------------------
-        const order = await prisma.order.create({
-            data: {
-                orderNumber: generateOrderNumber(),
-                userId: session.user.id!,
-                addressId: address.id,
-                totalAmount,
-                paypalId: paypalOrderId,
-                status: "PENDING",
-                paymentStatus: "CREATED",
-                contact: formData.contact,
-                items: {
-                    create: cart.items.map((item) => ({
-                        productId: item.productId,
-                        quantity: item.quantity,
-                        price: item.product.price,
-                    })),
+        const userId = session.user.id;
+        const result = await prisma.$transaction(async (tx) => {
+            // 1. 创建地址
+            const address = await tx.address.create({
+                data: {
+                    userId: userId,
+                    fullName,
+                    phone: formData.phone,
+                    address: formData.address,
+                    city: formData.city,
+                    country: "US",
+                    isDefault: false,
                 },
-            },
+            });
+
+            // 2. 保存订单
+            const order = await tx.order.create({
+                data: {
+                    orderNumber: generateOrderNumber(),
+                    userId: userId,
+                    addressId: address.id,
+                    totalAmount,
+                    paypalId: paypalOrderId,
+                    status: "PENDING",
+                    paymentStatus: "CREATED",
+                    contact: formData.contact,
+                    items: {
+                        create: cart.items.map((item) => ({
+                            productId: item.productId,
+                            quantity: item.quantity,
+                            price: item.product.price,
+                        })),
+                    },
+                },
+            });
+
+            // 3. 清空购物车
+            await tx.cartItem.deleteMany({
+                where: { cartId },
+            });
+
+            return order;
         });
 
-        console.log("orderid:", order.id)
-        // 清空购物车
-        await prisma.cartItem.updateMany({
-            where: { cartId },
-            data: { deletedAt: new Date() },
-        });
+        console.log("Order created with ID:", result.id);
 
-        // -------------------------------
-        // ✅ 返回 orderID 给前端
-        // -------------------------------
+        // 返回给前端
         return NextResponse.json({
             success: true,
             orderID: paypalOrderId,
         });
+
     } catch (error) {
         console.error("Order creation failed:", error);
         return NextResponse.json({ error: "Internal Server Error" }, { status: 500 });
@@ -129,5 +131,3 @@ function generateOrderNumber() {
     const randomSuffix = Math.floor(Math.random() * 1000).toString().padStart(3, '0'); // 001
     return `ORD-${dateStr}-${randomSuffix}`;
 }
-
-// 输出示例：ORD-20250608-042

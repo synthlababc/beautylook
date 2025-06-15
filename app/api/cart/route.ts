@@ -18,9 +18,6 @@ export async function GET() {
             },
             include: {
                 items: {
-                    where: {
-                        deletedAt: null // 只获取未被软删除的购物车项
-                    },
                     include: {
                         product: true
                     }
@@ -45,7 +42,7 @@ export async function POST(req: Request) {
             return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
         }
 
-        // Verify user exists
+        // 验证用户是否存在
         const user = await prisma.user.findUnique({
             where: { id: session.user.id }
         })
@@ -55,55 +52,56 @@ export async function POST(req: Request) {
 
         const { productId, quantity } = await req.json()
 
-        // First find existing cart
+        // 查找用户的购物车
         let cart = await prisma.cart.findFirst({
             where: {
                 userId: session.user.id
             }
         })
 
-        // Create new cart if none exists
+        // 如果没有购物车，就创建一个新的
         if (!cart) {
-            try {
-                cart = await prisma.cart.create({
-                    data: {
-                        user: {
-                            connect: {
-                                id: session.user.id
-                            }
+            cart = await prisma.cart.create({
+                data: {
+                    user: {
+                        connect: {
+                            id: session.user.id
                         }
                     }
-                })
-            } catch (error) {
-                console.error("Failed to create cart:", error)
-                return NextResponse.json(
-                    { error: 'Failed to create cart' },
-                    { status: 500 }
-                )
-            }
+                }
+            })
         }
 
-        // Add or update cart item
-        await prisma.cartItem.upsert({
+        // 查找当前 cart 中是否已有该商品
+        const existingItem = await prisma.cartItem.findFirst({
             where: {
-                cartId_productId: {
-                    cartId: cart.id,
-                    productId
-                }
-            },
-            create: {
                 cartId: cart.id,
-                productId,
-                quantity
-            },
-            update: {
-                quantity: {
-                    increment: quantity
-                }
+                productId
             }
         })
 
-        // Return updated cart
+        if (existingItem) {
+            // 存在 item，增加数量
+            await prisma.cartItem.update({
+                where: { id: existingItem.id },
+                data: {
+                    quantity: {
+                        increment: quantity
+                    }
+                }
+            })
+        } else {
+            // 创建新的 cartItem
+            await prisma.cartItem.create({
+                data: {
+                    cartId: cart.id,
+                    productId,
+                    quantity
+                }
+            })
+        }
+
+        // 返回更新后的购物车
         const updatedCart = await prisma.cart.findUnique({
             where: { id: cart.id },
             include: {
@@ -117,7 +115,7 @@ export async function POST(req: Request) {
 
         return NextResponse.json(updatedCart)
     } catch (error) {
-        console.log("cart error:", error)
+        console.error("cart error:", error)
         return NextResponse.json(
             { error: 'Failed to add item to cart' },
             { status: 500 }
@@ -173,12 +171,9 @@ export async function DELETE(req: Request) {
 
         const { itemId } = await req.json()
 
-        // await prisma.cartItem.delete({
-        //     where: { id: itemId }
-        // })
-        await prisma.cartItem.updateMany({
-            where: { id: itemId },
-            data: { deletedAt: new Date() }, // ✅ 现在 OK
+        // 直接删除购物车项
+        await prisma.cartItem.delete({
+            where: { id: itemId }
         });
 
         const cart = await prisma.cart.findFirst({

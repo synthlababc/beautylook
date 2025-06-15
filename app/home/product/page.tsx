@@ -112,11 +112,11 @@ export default function ProductPage() {
                 </div>
             )}
 
-            <div className="flex justify-center mt-8">
+            {/* <div className="flex justify-center mt-8">
                 <Link href="/product">
                     <Button variant="default" size="lg">View All Products</Button>
                 </Link>
-            </div>
+            </div> */}
         </div>
     )
 }

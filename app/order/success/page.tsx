@@ -143,7 +143,7 @@ function OrderSuccessContent() {
                         </Link>
                     </Button>
                     <Button variant="outline" asChild className="w-full">
-                        <Link href="/user/orders">
+                        <Link href="/user/order">
                             <Receipt className="mr-2 h-4 w-4" /> View Order Details
                         </Link>
                     </Button>

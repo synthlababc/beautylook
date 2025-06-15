@@ -53,7 +53,7 @@ export const authOptions: NextAuthOptions = {
     },
     secret: process.env.NEXTAUTH_SECRET,
     callbacks: {
-        async signIn({ user, account, profile, email, credentials }) {
+        async signIn({ user, account }) {
             // 如果是Google登录，检查是否已有相同邮箱的账户
             if (account?.provider === "google") {
                 const existingUser = await prisma.user.findUnique({
@@ -84,7 +84,7 @@ export const authOptions: NextAuthOptions = {
             }
             return true;
         },
-        async jwt({ token, user, account }) {
+        async jwt({ token, user }) {
             // 初次登录时添加用户信息到token
             if (user) {
                 token.id = user.id;

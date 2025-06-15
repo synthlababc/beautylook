@@ -1,5 +1,5 @@
 'use client'
-import { FcGoogle } from "react-icons/fc";
+// import { FcGoogle } from "react-icons/fc";
 
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -28,7 +28,7 @@ const Signup1 = ({
     alt: "logo",
     title: "shadcnblocks.com",
   },
-  googleText = "Sign up with Google",
+  // googleText = "Sign up with Google",
   signupText = "Create an account",
   loginText = "Already have an account?",
   loginUrl = "#",

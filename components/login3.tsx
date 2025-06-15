@@ -1,4 +1,4 @@
-import { FcGoogle } from "react-icons/fc";
+// import { FcGoogle } from "react-icons/fc";
 
 import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
@@ -30,7 +30,7 @@ const Login3 = ({
     alt: "Shadcnblocks",
   },
   loginText = "Log in",
-  googleText = "Log in with Google",
+  // googleText = "Log in with Google",
   signupText = "Don't have an account?",
   signupUrl = "#",
 }: Login3Props) => {

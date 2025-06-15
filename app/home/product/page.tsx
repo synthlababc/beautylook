@@ -1,8 +1,8 @@
 'use client'
 import { useState, useEffect } from 'react'
 import ProductCard_02 from "@/components/commerce-ui/product-card-02"
-import { Button } from "@/components/ui/button"
-import Link from "next/link"
+// import { Button } from "@/components/ui/button"
+// import Link from "next/link"
 // import { Separator } from "@/components/ui/separator"
 
 type Product = {

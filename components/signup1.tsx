@@ -73,7 +73,7 @@ const Signup1 = ({
     }
   };
   return (
-    <section className="h-screen bg-muted">
+    <section className="h-screen">
       <div className="flex h-full items-center justify-center">
         <div className="flex w-full max-w-sm flex-col items-center gap-y-8 rounded-md border border-muted bg-white px-6 py-12 shadow-md">
           <div className="flex flex-col items-center gap-y-2">

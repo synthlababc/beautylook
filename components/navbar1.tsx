@@ -213,7 +213,7 @@ const Navbar1 = ({
                     Profile
                   </DropdownMenuItem>
                   <DropdownMenuItem
-                    onClick={() => router.push("/user/orders")}
+                    onClick={() => router.push("/user/order")}
                     className="cursor-pointer"
                   >
                     Orders

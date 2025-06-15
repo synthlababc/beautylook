@@ -1,0 +1,26 @@
+[
+    {
+        "id": 1,
+        "name": "AeroTune X9",
+        "price": "39.59",
+        "image": "/micro/4+12.png",
+        "description": "Experience next-level audio with the AeroTune X9...",
+        "detail": "Detailed product information...",
+        "currency": "USD",
+        "category": {
+            "name": "Electronics"
+        }
+    },
+    {
+        "id": 2,
+        "name": "Glov Micro-Infusion System",
+        "price": "129.99",
+        "image": "/micro/1.png",
+        "description": "Professional skincare device for micro-infusion therapy",
+        "detail": "Detailed product information...",
+        "currency": "USD",
+        "category": {
+            "name": "Beauty"
+        }
+    }
+]

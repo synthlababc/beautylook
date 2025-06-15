@@ -132,10 +132,10 @@ const Signup1 = ({
                 <Button type="submit" className="mt-2 w-full" disabled={isLoading}>
                   {isLoading ? "Signing up..." : signupText}
                 </Button>
-                <Button variant="outline" className="w-full" disabled={isLoading}>
+                {/* <Button variant="outline" className="w-full" disabled={isLoading}>
                   <FcGoogle className="mr-2 size-5" />
                   {googleText}
-                </Button>
+                </Button> */}
               </div>
             </form>
           </div>

@@ -11,7 +11,8 @@ export default function LoginPage() {
       src: "/logo.png",
       alt: "beautylook",
     },
-    googleText: "Log in with Google"
+    googleText: "Log in with Google",
+    signupUrl: "/signup"
   };
 
   return (

@@ -1,7 +1,7 @@
 interface MenuItem {
   title: string;
   links: {
-    text: string;
+    text: string | React.ReactNode;
     url: string;
   }[];
 }

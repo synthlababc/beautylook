@@ -1,13 +1,13 @@
 // app/api/products/[id]/route.ts
 
 import { NextRequest } from 'next/server'
-import { prisma } from '@/lib/prisma'
+import products from '@/data/products.json'
 
 export async function GET(
     request: NextRequest,
     { params }: { params: Promise<{ id: string }> }
 ) {
-    const { id } = await params // ✅ 先 await params，再获取 id
+    const { id } = await params
     const productId = parseInt(id, 10)
 
     if (isNaN(productId)) {
@@ -17,33 +17,17 @@ export async function GET(
         })
     }
 
-    try {
-        const product = await prisma.product.findUnique({
-            where: { id: productId },
-            include: {
-                category: true,
-            },
-        })
+    const product = products.find(p => p.id === productId)
 
-        if (!product) {
-            return new Response(JSON.stringify({ error: 'Product not found' }), {
-                status: 404,
-                headers: { 'Content-Type': 'application/json' },
-            })
-        }
-
-        return new Response(JSON.stringify(product), {
-            status: 200,
+    if (!product) {
+        return new Response(JSON.stringify({ error: 'Product not found' }), {
+            status: 404,
             headers: { 'Content-Type': 'application/json' },
         })
-    } catch (error) {
-        console.error('Database error:', error)
-        return new Response(
-            JSON.stringify({ error: 'Failed to fetch product', details: error }),
-            {
-                status: 500,
-                headers: { 'Content-Type': 'application/json' },
-            }
-        )
     }
+
+    return new Response(JSON.stringify(product), {
+        status: 200,
+        headers: { 'Content-Type': 'application/json' },
+    })
 }

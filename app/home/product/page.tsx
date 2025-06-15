@@ -3,7 +3,7 @@ import { useState, useEffect } from 'react'
 import ProductCard_02 from "@/components/commerce-ui/product-card-02"
 import { Button } from "@/components/ui/button"
 import Link from "next/link"
-import { Separator } from "@/components/ui/separator"
+// import { Separator } from "@/components/ui/separator"
 
 type Product = {
     id: number;  // 改为 number 以匹配 API
@@ -87,28 +87,30 @@ export default function ProductPage() {
                 </div>
             </div>
 
-            <Separator />
+            {/* <Separator /> */}
 
             {/* New Products Section */}
-            <div className="mb-12 mt-10">
-                <h2 className="text-2xl font-bold text-center mb-6">New Products</h2>
-                <div className="flex justify-center">
-                    <div className="grid grid-cols-1 gap-6 max-w-4xl">
-                        {newProducts.map((product) => (
-                            <ProductCard_02
-                                key={product.id}
-                                id={product.id}
-                                title={product.name}
-                                description={product.description}
-                                price={product.price}
-                                imageUrl={product.image}
-                                rating={product.rating || 4.5}
-                                reviewCount={product.reviewCount || 100}
-                            />
-                        ))}
+            {newProducts.length > 0 && (
+                <div className="mb-12 mt-10">
+                    <h2 className="text-2xl font-bold text-center mb-6">New Products</h2>
+                    <div className="flex justify-center">
+                        <div className="grid grid-cols-1 gap-6 max-w-4xl">
+                            {newProducts.map((product) => (
+                                <ProductCard_02
+                                    key={product.id}
+                                    id={product.id}
+                                    title={product.name}
+                                    description={product.description}
+                                    price={product.price}
+                                    imageUrl={product.image}
+                                    rating={product.rating || 4.5}
+                                    reviewCount={product.reviewCount || 100}
+                                />
+                            ))}
+                        </div>
                     </div>
                 </div>
-            </div>
+            )}
 
             <div className="flex justify-center mt-8">
                 <Link href="/product">

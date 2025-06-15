@@ -1,4 +1,5 @@
 import { Footer2 } from "@/components/footer2";
+import { Mail } from 'lucide-react';
 
 const Footer2Data = {
     logo: {
@@ -27,9 +28,17 @@ const Footer2Data = {
         {
             title: "Social",
             links: [
-                { text: "Email: contact@beautylook.top", url: "/" },
+                {
+                    text: (
+                        <div className="flex items-center">
+                            <Mail className="h-5 w-5 mr-2" />
+                            contact@beautylook.top
+                        </div>
+                    ),
+                    url: "mailto:contact@beautylook.top",
+                },
             ],
-        },
+        }
     ],
     copyright: `© ${new Date().getFullYear()} beautylook.top. All rights reserved.`,
     bottomLinks: [

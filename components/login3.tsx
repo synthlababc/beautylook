@@ -136,7 +136,7 @@ const Login3 = ({
               <Button
                 variant="outline"
                 className="w-full"
-                onClick={() => signIn('google', { callbackUrl: '/user' })}
+                onClick={() => signIn('google', { callbackUrl: '/' })}
               >
                 <FcGoogle className="mr-2 size-5" />
                 {googleText}

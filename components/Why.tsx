@@ -4,11 +4,11 @@ import * as React from 'react'
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card'
 import { Leaf, Globe, Recycle, CheckCircle } from 'lucide-react'
 
-type Feature = {
-    icon: React.ReactNode
-    title: string
-    description: string
-}
+// type Feature = {
+//     icon: React.ReactNode
+//     title: string
+//     description: string
+// }
 
 const features = [
     {
@@ -33,7 +33,7 @@ const features = [
     },
 ]
 
-export function WhyBeYours() {
+export default function Why() {
     return (
         <section className="py-16 bg-white">
             <div className="container mx-auto px-4 sm:px-6 lg:px-8">

@@ -4,7 +4,7 @@ import * as React from 'react'
 import Link from 'next/link';
 import { Button } from '@/components/ui/button'
 
-type RadiantResultsProps = {
+type NowProps = {
     title: string;
     subtitle: string;
     description: string;
@@ -12,13 +12,13 @@ type RadiantResultsProps = {
     ctaText?: string;
 }
 
-export function RadiantResults({
+export default function Now({
     title,
     subtitle,
     description,
     imageSrc,
     ctaText = 'SHOP NOW',
-}: RadiantResultsProps) {
+}: NowProps) {
     return (
         <section className="py-16 bg-white">
             <div className="container mx-auto px-4 sm:px-6 lg:px-8 grid grid-cols-1 md:grid-cols-[2fr_3fr] gap-12 items-center">

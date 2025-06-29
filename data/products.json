@@ -1,1 +1,19 @@
-[]
+[
+    {
+        "id": 6,
+        "name": "Sterile Needle Heads (2)",
+        "description": "Refills include sterile needle heads to attach to your Micro-Infusion device",
+        "price": 700.000000000000000000000000000000,
+        "currency": "USD",
+        "status": "HOT",
+        "image": "\/micro\/head.png",
+        "detail": "",
+        "createdAt": "2025-06-14T19:05:22.912Z",
+        "updatedAt": "2025-06-14T19:05:22.912Z",
+        "categoryId": 1,
+        "category": {
+            "id": 1,
+            "name": "Micro Infusion System"
+        }
+    }
+]

@@ -1,12 +1,12 @@
 UPDATE public."Product"
-SET name = 'Glov Micro Infusion System Bundle + 3 Serums + 2 Needles'
+SET name = 'Micro Infusion System Bundle + 3 Serums + 2 Needles'
 WHERE id = 2;
 
 UPDATE public."Product"
 SET description = $$
 Includes :
-(1) Glov Micro Infusion System
-(3) Glov Anti-Aging Serums
+(1) Micro Infusion System
+(3) Anti-Aging Serums
 (2) Sterile Needle Heads
 $$
 WHERE id = 2;
@@ -22,7 +22,7 @@ SET detail = $$
 <div class="grid grid-cols-1 md:grid-cols-2 gap-6 my-8">
     <!-- 左边图片 -->
     <div class="flex justify-center">
-        <img src="/micro/2.png" alt="Image 2" class="max-w-full h-auto max-h-96 rounded-lg shadow-md object-contain" />
+        <img src="/micro/4+12.jpg" alt="Image 2" class="max-w-full h-auto max-h-96 rounded-lg shadow-md object-contain" />
     </div>
 
     <!-- 右边内容 -->
@@ -30,15 +30,10 @@ SET detail = $$
         <h1 class="text-3xl font-bold text-center">The Magic Behind Microinfusion</h1>
         <h2 class="text-xl text-center">How it Works?</h2>
 
-        <p>The Glov Micro-Infusion System achieves its exceptional effectiveness through stimulation and infusion.</p>
+        <p>The Micro-Infusion System achieves its exceptional effectiveness through stimulation and infusion.</p>
 
         <p>First, it delicately "stamps" the skin with 24K gold 0.25mm clinical-grade needles, inducing controlled trauma.
             This prompts increased collagen production, naturally improving elasticity and diminishing fine lines and wrinkles.</p>
-
-        <div class="flex justify-center mt-4">
-            <img src="/micro/skin.png" alt="Skin Treatment" class="max-w-full h-auto rounded-lg shadow-md" />
-        </div>
-
         <p>The needles, finer than human hair, guarantee a virtually pain-free procedure.</p>
 
         <p>Next, invisible micro-channels "infuse" your selected clinically-formulated serums into the skin's surface,
@@ -47,18 +42,26 @@ SET detail = $$
 </div>
 
 <div class="flex justify-center mt-4">
-    <img src="/micro/3.png" alt="Image 3" class="max-w-full h-auto rounded-lg shadow-md" />
+    <img src="/micro/1.jpg" alt="Image 3" class="max-w-full h-auto rounded-lg shadow-md" />
 </div>
 
 <div class="flex justify-center mt-4">
-    <img src="/micro/4.png" alt="Image 3" class="max-w-full h-auto rounded-lg shadow-md" />
+    <img src="/micro/2.jpg" alt="Image 3" class="max-w-full h-auto rounded-lg shadow-md" />
+</div>
+
+<div class="flex justify-center mt-4">
+    <img src="/micro/3.jpg" alt="Image 3" class="max-w-full h-auto rounded-lg shadow-md" />
+</div>
+
+<div class="flex justify-center mt-4">
+    <img src="/micro/4.jpg" alt="Image 3" class="max-w-full h-auto rounded-lg shadow-md" />
 </div>
 
 <!-- How to Use Section -->
 <div class="grid grid-cols-1 md:grid-cols-2 gap-6 my-8">
     <!-- 左边图片 -->
     <div class="flex justify-center">
-        <img src="/micro/gif_5.gif" alt="Microinfusion Device" class="w-120 h-120 rounded-lg shadow-md object-cover" />
+        <img src="/micro/4+12.jpg" alt="Microinfusion Device" class="w-120 h-120 rounded-lg shadow-md object-cover" />
     </div>
 
     <!-- 右边内容 -->

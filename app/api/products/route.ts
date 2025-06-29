@@ -1,24 +1,26 @@
 // app/api/products/route.ts
 import { NextResponse } from 'next/server';
-import products from '@/data/products.json';
+import { PrismaClient } from '@prisma/client';
+import type { ProductStatus } from '@prisma/client';
 
-interface Product {
-    id: number;
-    name: string;
-    description: string;
-    price: string;
-    currency: string;
-    status: 'ACTIVE' | 'INACTIVE';
-    image: string;
-    createdAt: string;
-    category: {
+const prisma = new PrismaClient();
+
+// 定义响应类型
+interface ProductsResponse {
+    data: Array<{
         id: number;
         name: string;
-    };
-}
-
-interface ProductsResponse {
-    data: Product[];
+        description: string;
+        price: number;
+        currency: string;
+        status: ProductStatus;
+        image: string;
+        createdAt: string;
+        category: {
+            id: number;
+            name: string;
+        };
+    }>;
     meta: {
         total: number;
         page: number;
@@ -30,58 +32,67 @@ interface ProductsResponse {
 export async function GET(request: Request) {
     try {
         const { searchParams } = new URL(request.url);
+
+        // 直接解析出基本参数
         const page = parseInt(searchParams.get('page') || '1', 10);
         const limit = parseInt(searchParams.get('limit') || '10', 10);
-        const category = searchParams.get('category');
-        const status = searchParams.get('status') as 'ACTIVE' | 'INACTIVE' | undefined;
+        const category = searchParams.get('category') || undefined;
+        const status = searchParams.get('status') as ProductStatus | undefined;
         const sortBy = searchParams.get('sortBy') as 'price' | 'createdAt' | undefined;
-        const sortOrder = searchParams.get('sortOrder') as 'asc' | 'desc' || 'desc';
+        const sortOrder = (searchParams.get('sortOrder') as 'asc' | 'desc') || 'desc';
 
-        // 筛选数据
-        let filteredProducts = [...products];
-        if (category) {
-            filteredProducts = filteredProducts.filter(
-                p => p.category.name.toLowerCase() === category.toLowerCase()
-            );
-        }
-        if (status) {
-            filteredProducts = filteredProducts.filter(p => p.status === status);
-        }
+        // 构建查询条件
+        const where = {
+            ...(category && { category: { name: category } }),
+            ...(status && { status: status }),
+        };
 
-        // 排序数据
-        if (sortBy) {
-            filteredProducts.sort((a, b) => {
-                const aValue = a[sortBy];
-                const bValue = b[sortBy];
+        // 构建排序条件
+        const orderBy = sortBy
+            ? ({ [sortBy]: sortOrder } satisfies { [key in 'price' | 'createdAt']?: 'asc' | 'desc' })
+            : ({ createdAt: 'asc' } satisfies { createdAt?: 'asc' | 'desc' });
 
-                if (aValue < bValue) return sortOrder === 'asc' ? -1 : 1;
-                if (aValue > bValue) return sortOrder === 'asc' ? 1 : -1;
-                return 0;
-            });
-        }
+        // 查询总数
+        const total = await prisma.product.count({ where });
 
-        const total = filteredProducts.length;
+        // 查询产品数据（确保 include 正确）
+        const products = await prisma.product.findMany({
+            skip: (page - 1) * limit,
+            take: limit,
+            where,
+            orderBy,
+            include: {
+                category: {
+                    select: {
+                        id: true,
+                        name: true,
+                    },
+                },
+            },
+        });
+
+        // 计算总页数
         const totalPages = Math.ceil(total / limit);
 
-        // 分页数据
-        const paginatedProducts = filteredProducts.slice(
-            (page - 1) * limit,
-            page * limit
-        );
-
+        // 格式化响应数据
         const response: ProductsResponse = {
-            data: paginatedProducts.map(p => ({
-                ...p,
-                price: p.price.toString(),
-                status: p.status as 'ACTIVE' | 'INACTIVE',
-                createdAt: new Date(p.createdAt).toISOString()
+            data: products.map(product => ({
+                id: product.id,
+                name: product.name,
+                description: product.description,
+                price: Number(product.price),
+                currency: product.currency,
+                status: product.status,
+                image: product.image,
+                createdAt: product.createdAt.toISOString(),
+                category: product.category!, // 确保非空
             })),
             meta: {
                 total,
                 page,
                 limit,
-                totalPages
-            }
+                totalPages,
+            },
         };
 
         return NextResponse.json(response);

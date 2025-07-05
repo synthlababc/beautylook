@@ -8,8 +8,13 @@ Includes :
 (1) Micro Infusion System
 (3) Anti-Aging Serums
 (2) Sterile Needle Heads
+
+✔ Smooths Wrinkles And Fine Lines
+✔ Stimulates Collagen Production
+✔ Boosts Serum Absorption By 300%
+✔ Brightens Dark Spots
 $$
-WHERE id = 2;
+WHERE id = 1;
 
 UPDATE public."Product"
 SET image = '/micro/1+3.png'

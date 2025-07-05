@@ -1,9 +1,9 @@
-import GoogleProvider from "next-auth/providers/google";
-import CredentialsProvider from "next-auth/providers/credentials";
 import { PrismaAdapter } from "@next-auth/prisma-adapter";
 import { prisma } from "@/lib/prisma";
 import bcrypt from "bcrypt";
 import { NextAuthOptions } from "next-auth";
+import CredentialsProvider from "next-auth/providers/credentials";
+import GoogleProvider from "next-auth/providers/google";
 
 export const authOptions: NextAuthOptions = {
     adapter: PrismaAdapter(prisma),
@@ -31,15 +31,15 @@ export const authOptions: NextAuthOptions = {
                     throw new Error("No user found with this email");
                 }
 
-                // 防止 Google 用户尝试用密码登录
-                if (user.emailVerified && user.password === null) {
+                // Google 用户不能用密码登录
+                if (!user.password) {
                     throw new Error("This email was registered with Google. Please use Google login.");
                 }
 
                 // 检查密码是否正确
                 const isPasswordCorrect = await bcrypt.compare(
                     credentials.password,
-                    user.password!
+                    user.password
                 );
 
                 if (!isPasswordCorrect) {
@@ -67,7 +67,9 @@ export const authOptions: NextAuthOptions = {
 
                 // 如果用户存在且有密码 => 禁止用 Google 登录
                 if (existingUser && existingUser.password) {
-                    throw new Error("This email is already registered with a password. Please use email/password login.");
+                    throw new Error(
+                        "This email is already registered with a password. Please use email/password login."
+                    );
                 }
 
                 // 如果用户存在但未 verified => 更新为 verified
@@ -79,8 +81,6 @@ export const authOptions: NextAuthOptions = {
                         },
                     });
                 }
-
-                // ❗ 不要在这里插入 accounts.create！Prisma Adapter 已经自动处理了！
 
                 return true;
             }

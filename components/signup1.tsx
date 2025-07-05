@@ -58,7 +58,7 @@ const Signup1 = ({
 
       if (!res.ok) {
         const data = await res.json();
-        throw new Error(data.message || "register failed!");
+        throw new Error(data.error || "register failed!");
       }
 
       // 注册成功，跳转登录页

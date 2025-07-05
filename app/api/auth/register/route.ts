@@ -8,31 +8,11 @@ export async function POST(request: NextRequest) {
     const { username, email, password } = await request.json();
 
     if (!username || !email || !password) {
-        return Response.json({ message: "Missing fields" }, { status: 400 });
+        // 缺少字段，直接抛出错误，让上层捕获
+        throw new Error("Missing fields");
     }
 
     try {
-        // 检查邮箱或用户名是否已存在
-        const existingUser = await prisma.user.findFirst({
-            where: {
-                OR: [{ email }, { name: username }],
-            },
-        });
-
-        if (existingUser) {
-            if (existingUser.email === email) {
-                return Response.json(
-                    { message: "Email already registered" },
-                    { status: 400 }
-                );
-            } else {
-                return Response.json(
-                    { message: "Username already taken" },
-                    { status: 400 }
-                );
-            }
-        }
-
         // 加密密码
         const hashedPassword = await bcrypt.hash(password, 10);
 
@@ -51,10 +31,12 @@ export async function POST(request: NextRequest) {
             { status: 201 }
         );
     } catch (error) {
+        // 不再自己判断邮箱/用户名是否重复，直接抛出原始错误
         console.error("Registration error:", error);
-        return Response.json(
-            { message: "Registration failed. Please try again." },
-            { status: 500 }
-        );
+
+        // 重新抛出错误，让调用者或中间件统一处理
+        throw error;
+    } finally {
+        await prisma.$disconnect();
     }
 }

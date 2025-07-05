@@ -44,7 +44,7 @@ model User {
   emailVerified DateTime?
   image         String?
   role          String?
-  password      String
+  password      String?
   accounts      Account[]
   sessions      Session[]
   ResetPassword ResetPassword[]

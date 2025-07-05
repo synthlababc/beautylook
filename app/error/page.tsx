@@ -13,8 +13,8 @@ export default function ErrorPage() {
                 An error occurred during authentication. Please try again later.
             </p>
             <div className="flex gap-2">
-                <Button onClick={() => router.push("/signin")}>
-                    Back to Sign In
+                <Button onClick={() => router.push("/login")}>
+                    Back to login
                 </Button>
                 <Button variant="outline" onClick={() => router.push("/")}>
                     Back to Home

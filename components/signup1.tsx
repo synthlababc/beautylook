@@ -1,5 +1,5 @@
 'use client'
-// import { FcGoogle } from "react-icons/fc";
+import { FcGoogle } from "react-icons/fc";
 
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -28,7 +28,7 @@ const Signup1 = ({
     alt: "logo",
     title: "shadcnblocks.com",
   },
-  // googleText = "Sign up with Google",
+  googleText = "Sign up with Google",
   signupText = "Create an account",
   loginText = "Already have an account?",
   loginUrl = "#",
@@ -132,10 +132,10 @@ const Signup1 = ({
                 <Button type="submit" className="mt-2 w-full" disabled={isLoading}>
                   {isLoading ? "Signing up..." : signupText}
                 </Button>
-                {/* <Button variant="outline" className="w-full" disabled={isLoading}>
+                <Button variant="outline" className="w-full" disabled={isLoading}>
                   <FcGoogle className="mr-2 size-5" />
                   {googleText}
-                </Button> */}
+                </Button>
               </div>
             </form>
           </div>

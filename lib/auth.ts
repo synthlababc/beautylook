@@ -27,18 +27,19 @@ export const authOptions: NextAuthOptions = {
                     where: { email: credentials.email },
                 });
 
-                // Check if this is a Google-only account
-                if (user && user.emailVerified && !user.password) {
-                    throw new Error("This email was registered with Google. Please use Google login.");
-                }
-
-                if (!user || !user.password) {
+                if (!user) {
                     throw new Error("No user found with this email");
                 }
 
+                // 防止 Google 用户尝试用密码登录
+                if (user.emailVerified && user.password === null) {
+                    throw new Error("This email was registered with Google. Please use Google login.");
+                }
+
+                // 检查密码是否正确
                 const isPasswordCorrect = await bcrypt.compare(
                     credentials.password,
-                    user.password
+                    user.password!
                 );
 
                 if (!isPasswordCorrect) {
@@ -64,27 +65,22 @@ export const authOptions: NextAuthOptions = {
                     where: { email: user.email as string },
                 });
 
-                // If normal user exists with password, block Google login
+                // 如果用户存在且有密码 => 禁止用 Google 登录
                 if (existingUser && existingUser.password) {
                     throw new Error("This email is already registered with a password. Please use email/password login.");
                 }
 
-                // If user exists but not yet verified (e.g., created via another provider)
+                // 如果用户存在但未 verified => 更新为 verified
                 if (existingUser && !existingUser.emailVerified) {
                     await prisma.user.update({
                         where: { id: existingUser.id },
                         data: {
                             emailVerified: new Date(),
-                            accounts: {
-                                create: {
-                                    provider: account.provider,
-                                    providerAccountId: account.providerAccountId,
-                                    type: account.type,
-                                },
-                            },
                         },
                     });
                 }
+
+                // ❗ 不要在这里插入 accounts.create！Prisma Adapter 已经自动处理了！
 
                 return true;
             }

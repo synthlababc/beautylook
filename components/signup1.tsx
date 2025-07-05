@@ -1,13 +1,12 @@
 'use client'
 import { FcGoogle } from "react-icons/fc";
-import { useEffect } from "react";
 
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { useState } from "react";
 import { useRouter } from "next/navigation";
+import { toast } from 'sonner';
 import { signIn } from "next-auth/react";
-import { toast } from "sonner";
 
 interface Signup1Props {
   heading?: string;
@@ -34,19 +33,9 @@ const Signup1 = ({
   googleText = "Sign up with Google",
   signupText = "Create an account",
   loginText = "Already have an account?",
-  loginUrl = "#",
+  loginUrl = "/",
 }: Signup1Props) => {
   const router = useRouter();
-
-  useEffect(() => {
-    const params = new URLSearchParams(window.location.search);
-    const error = params.get('error');
-    if (error) {
-      toast.error(decodeURIComponent(error));
-      // 清除URL中的错误参数
-      window.history.replaceState(null, '', window.location.pathname);
-    }
-  }, []);
 
   const [username, setUsername] = useState("");
   const [email, setEmail] = useState("");
@@ -59,26 +48,32 @@ const Signup1 = ({
     setIsLoading(true);
     setError("");
 
-    const res = await fetch("/api/auth/register", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({ username, email, password }),
-    });
+    try {
+      const res = await fetch("/api/auth/register", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ username, email, password }),
+      });
 
-    setIsLoading(false);
+      if (!res.ok) {
+        const data = await res.json();
+        // throw new Error(data.message || "register failed!");
+        toast.error(data.message || "register failed!");
+      }
 
-    if (!res.ok) {
-      const data = await res.json();
-      const errorMsg = data.message || "Registration failed, please try again";
-      setError(errorMsg);
-      toast.error(errorMsg);
-      return;
+      // 注册成功，跳转登录页
+      router.push(loginUrl);
+    } catch (err) {
+      if (err instanceof Error) {
+        setError(err.message);
+      } else {
+        setError("Something went wrong.");
+      }
+    } finally {
+      setIsLoading(false);
     }
-
-    // 注册成功，跳转登录页
-    router.push(loginUrl);
   };
   return (
     <section className="h-screen">
@@ -146,10 +141,11 @@ const Signup1 = ({
                 </Button> */}
               </div>
             </form>
+
             <Button
               variant="outline"
               className="w-full"
-              onClick={() => signIn('google', { callbackUrl: '/' })}
+              onClick={() => signIn('google', { redirect: false, callbackUrl: '/' })}
             >
               <FcGoogle className="mr-2 size-5" />
               {googleText}

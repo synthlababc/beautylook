@@ -52,10 +52,10 @@ export const authOptions: NextAuthOptions = {
     session: {
         strategy: "jwt",
     },
-    // pages: {
-    //     signIn: "/login",
-    //     error: "/error",
-    // },
+    pages: {
+        signIn: "/login",
+        error: "/error",
+    },
     secret: process.env.NEXTAUTH_SECRET,
     callbacks: {
         async signIn({ user, account }) {

@@ -1,30 +1,24 @@
-"use client"
+import { Button } from "@/components/ui/button";
+import Link from "next/link";
 
-import { Button } from "@/components/ui/button"
-import { useRouter } from "next/navigation"
-import { useSearchParams } from "next/navigation"
-import { useEffect, useState } from "react"
+// 页面必须是 async 的，因为要 await searchParams
+export default async function ErrorPage({
+    searchParams,
+}: {
+    searchParams: Promise<{ [key: string]: string | string[] | undefined }>;
+}) {
+    const error = (await searchParams).error;
 
-export default function ErrorPage() {
-    const searchParams = useSearchParams()
-    const router = useRouter()
+    let errorMessage: string | null = null;
 
-    // 使用状态保存解码后的错误信息
-    const [errorMessage, setErrorMessage] = useState<string | null>(null)
-
-    // 获取并解码 error 参数
-    useEffect(() => {
-        const error = searchParams.get("error")
-        if (error) {
-            try {
-                const decodedError = decodeURIComponent(error)
-                setErrorMessage(decodedError)
-            } catch (e) {
-                console.error("Failed to decode error:", e) // 使用 e
-                setErrorMessage("An unknown error occurred.")
-            }
+    if (error) {
+        try {
+            errorMessage = decodeURIComponent(Array.isArray(error) ? error[0] : error);
+        } catch (e) {
+            console.error("Failed to decode error:", e);
+            errorMessage = "An unknown error occurred.";
         }
-    }, [searchParams])
+    }
 
     return (
         <div className="flex flex-col items-center justify-center min-h-screen gap-4">
@@ -32,9 +26,7 @@ export default function ErrorPage() {
 
             {/* 显示动态错误信息 */}
             {errorMessage ? (
-                <p className="text-red-500 max-w-md text-center">
-                    {errorMessage}
-                </p>
+                <p className="text-red-500 max-w-md text-center">{errorMessage}</p>
             ) : (
                 <p className="text-gray-500">
                     An error occurred during authentication. Please try again later.
@@ -42,13 +34,13 @@ export default function ErrorPage() {
             )}
 
             <div className="flex gap-2">
-                <Button onClick={() => router.push("/login")}>
-                    Back to login
+                <Button asChild>
+                    <Link href="/login">Back to login</Link>
                 </Button>
-                <Button variant="outline" onClick={() => router.push("/")}>
-                    Back to Home
+                <Button variant="outline" asChild>
+                    <Link href="/">Back to Home</Link>
                 </Button>
             </div>
         </div>
-    )
+    );
 }

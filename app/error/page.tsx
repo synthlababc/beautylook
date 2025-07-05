@@ -20,6 +20,7 @@ export default function ErrorPage() {
                 const decodedError = decodeURIComponent(error)
                 setErrorMessage(decodedError)
             } catch (e) {
+                console.error("Failed to decode error:", e) // 使用 e
                 setErrorMessage("An unknown error occurred.")
             }
         }

@@ -1,6 +1,6 @@
 import { PrismaClient } from "@prisma/client";
 import bcrypt from "bcrypt";
-import { NextRequest } from "next/server";
+import { NextRequest, NextResponse } from "next/server";
 
 const prisma = new PrismaClient();
 
@@ -8,34 +8,34 @@ export async function POST(request: NextRequest) {
     const { username, email, password } = await request.json();
 
     if (!username || !email || !password) {
-        // 缺少字段，直接抛出错误，让上层捕获
-        throw new Error("Missing fields");
+        return NextResponse.json({ error: "Missing fields" }, { status: 400 });
     }
 
     try {
-        // 加密密码
         const hashedPassword = await bcrypt.hash(password, 10);
 
-        // 创建新用户
-        await prisma.user.create({
+        const user = await prisma.user.create({
             data: {
                 name: username,
                 email,
                 password: hashedPassword,
                 role: "user",
+                emailVerified: null, // 可选：如果是邮箱验证系统，则这里为 null
             },
         });
 
-        return Response.json(
-            { message: "Registration successful" },
+        return NextResponse.json(
+            { message: "Registration successful", user },
             { status: 201 }
         );
-    } catch (error) {
-        // 不再自己判断邮箱/用户名是否重复，直接抛出原始错误
+    } catch (error: any) {
         console.error("Registration error:", error);
 
-        // 重新抛出错误，让调用者或中间件统一处理
-        throw error;
+        // 让客户端直接看到原始错误信息（便于调试）
+        return NextResponse.json(
+            { error: error.message, code: error.code, meta: error.meta },
+            { status: 500 }
+        );
     } finally {
         await prisma.$disconnect();
     }

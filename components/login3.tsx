@@ -1,4 +1,4 @@
-// import { FcGoogle } from "react-icons/fc";
+import { FcGoogle } from "react-icons/fc";
 
 import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
@@ -30,7 +30,7 @@ const Login3 = ({
     alt: "Shadcnblocks",
   },
   loginText = "Log in",
-  // googleText = "Log in with Google",
+  googleText = "Log in with Google",
   signupText = "Don't have an account?",
   signupUrl = "#",
 }: Login3Props) => {
@@ -133,14 +133,14 @@ const Login3 = ({
                   {isLoading ? "Logging in..." : loginText}
                 </Button>
               </form>
-              {/* <Button
+              <Button
                 variant="outline"
                 className="w-full"
                 onClick={() => signIn('google', { callbackUrl: '/' })}
               >
                 <FcGoogle className="mr-2 size-5" />
                 {googleText}
-              </Button> */}
+              </Button>
 
               <div className="mx-auto mt-8 flex justify-center gap-1 text-sm text-muted-foreground">
                 <p>{signupText}</p>

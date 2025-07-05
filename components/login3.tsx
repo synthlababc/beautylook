@@ -6,8 +6,6 @@ import { Input } from "@/components/ui/input";
 import { signIn } from "next-auth/react";
 import { useState } from "react";
 import { useEffect } from "react";
-import { useRouter } from "next/navigation";
-import { toast } from 'sonner';
 
 interface Login3Props {
   heading?: string;
@@ -36,8 +34,6 @@ const Login3 = ({
   signupText = "Don't have an account?",
   signupUrl = "#",
 }: Login3Props) => {
-  const router = useRouter();
-
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [isLoading, setIsLoading] = useState(false);
@@ -69,15 +65,14 @@ const Login3 = ({
     setIsLoading(false);
 
     if (result?.error) {
-      toast.error(result.error);
+      setError("Invalid credentials. Please try again.");
     } else {
       if (remember) {
         localStorage.setItem("rememberedEmail", email);
       } else {
         localStorage.removeItem("rememberedEmail");
       }
-      // 注册成功，跳转登录页
-      router.push("/");
+      window.location.href = "/"; // 登录成功后跳转页面
     }
   };
 
@@ -141,7 +136,7 @@ const Login3 = ({
               <Button
                 variant="outline"
                 className="w-full"
-                onClick={() => signIn('google', { redirect: false, callbackUrl: '/' })}
+                onClick={() => signIn('google', { callbackUrl: '/' })}
               >
                 <FcGoogle className="mr-2 size-5" />
                 {googleText}

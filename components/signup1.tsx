@@ -5,7 +5,6 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { useState } from "react";
 import { useRouter } from "next/navigation";
-import { toast } from 'sonner';
 import { signIn } from "next-auth/react";
 
 interface Signup1Props {
@@ -33,7 +32,7 @@ const Signup1 = ({
   googleText = "Sign up with Google",
   signupText = "Create an account",
   loginText = "Already have an account?",
-  loginUrl = "/",
+  loginUrl = "#",
 }: Signup1Props) => {
   const router = useRouter();
 
@@ -59,8 +58,7 @@ const Signup1 = ({
 
       if (!res.ok) {
         const data = await res.json();
-        // throw new Error(data.message || "register failed!");
-        toast.error(data.message || "register failed!");
+        throw new Error(data.message || "register failed!");
       }
 
       // 注册成功，跳转登录页
@@ -145,7 +143,7 @@ const Signup1 = ({
             <Button
               variant="outline"
               className="w-full"
-              onClick={() => signIn('google', { redirect: false, callbackUrl: '/' })}
+              onClick={() => signIn('google', { callbackUrl: '/' })}
             >
               <FcGoogle className="mr-2 size-5" />
               {googleText}

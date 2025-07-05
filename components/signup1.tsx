@@ -1,10 +1,13 @@
 'use client'
 import { FcGoogle } from "react-icons/fc";
+import { useEffect } from "react";
 
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { useState } from "react";
 import { useRouter } from "next/navigation";
+import { signIn } from "next-auth/react";
+import { toast } from "sonner";
 
 interface Signup1Props {
   heading?: string;
@@ -35,6 +38,16 @@ const Signup1 = ({
 }: Signup1Props) => {
   const router = useRouter();
 
+  useEffect(() => {
+    const params = new URLSearchParams(window.location.search);
+    const error = params.get('error');
+    if (error) {
+      toast.error(decodeURIComponent(error));
+      // 清除URL中的错误参数
+      window.history.replaceState(null, '', window.location.pathname);
+    }
+  }, []);
+
   const [username, setUsername] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -46,31 +59,26 @@ const Signup1 = ({
     setIsLoading(true);
     setError("");
 
-    try {
-      const res = await fetch("/api/auth/register", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({ username, email, password }),
-      });
+    const res = await fetch("/api/auth/register", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({ username, email, password }),
+    });
 
-      if (!res.ok) {
-        const data = await res.json();
-        throw new Error(data.message || "register failed!");
-      }
+    setIsLoading(false);
 
-      // 注册成功，跳转登录页
-      router.push(loginUrl);
-    } catch (err) {
-      if (err instanceof Error) {
-        setError(err.message);
-      } else {
-        setError("Something went wrong.");
-      }
-    } finally {
-      setIsLoading(false);
+    if (!res.ok) {
+      const data = await res.json();
+      const errorMsg = data.message || "Registration failed, please try again";
+      setError(errorMsg);
+      toast.error(errorMsg);
+      return;
     }
+
+    // 注册成功，跳转登录页
+    router.push(loginUrl);
   };
   return (
     <section className="h-screen">
@@ -132,12 +140,20 @@ const Signup1 = ({
                 <Button type="submit" className="mt-2 w-full" disabled={isLoading}>
                   {isLoading ? "Signing up..." : signupText}
                 </Button>
-                <Button variant="outline" className="w-full" disabled={isLoading}>
+                {/* <Button variant="outline" className="w-full" disabled={isLoading}>
                   <FcGoogle className="mr-2 size-5" />
                   {googleText}
-                </Button>
+                </Button> */}
               </div>
             </form>
+            <Button
+              variant="outline"
+              className="w-full"
+              onClick={() => signIn('google', { callbackUrl: '/' })}
+            >
+              <FcGoogle className="mr-2 size-5" />
+              {googleText}
+            </Button>
           </div>
 
           <div className="flex justify-center gap-1 text-sm text-muted-foreground">

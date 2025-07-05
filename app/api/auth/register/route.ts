@@ -20,10 +20,17 @@ export async function POST(request: NextRequest) {
         });
 
         if (existingUser) {
-            return Response.json(
-                { message: "User already exists" },
-                { status: 400 }
-            );
+            if (existingUser.email === email) {
+                return Response.json(
+                    { message: "Email already registered" },
+                    { status: 400 }
+                );
+            } else {
+                return Response.json(
+                    { message: "Username already taken" },
+                    { status: 400 }
+                );
+            }
         }
 
         // 加密密码
@@ -46,7 +53,7 @@ export async function POST(request: NextRequest) {
     } catch (error) {
         console.error("Registration error:", error);
         return Response.json(
-            { message: "Internal server error" },
+            { message: "Registration failed. Please try again." },
             { status: 500 }
         );
     }

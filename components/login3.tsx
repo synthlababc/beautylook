@@ -3,9 +3,11 @@ import { FcGoogle } from "react-icons/fc";
 import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Input } from "@/components/ui/input";
+import { toast } from "sonner";
 import { signIn } from "next-auth/react";
 import { useState } from "react";
 import { useEffect } from "react";
+import { useRouter } from "next/navigation";
 
 interface Login3Props {
   heading?: string;
@@ -34,6 +36,7 @@ const Login3 = ({
   signupText = "Don't have an account?",
   signupUrl = "#",
 }: Login3Props) => {
+  const router = useRouter();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [isLoading, setIsLoading] = useState(false);
@@ -65,14 +68,16 @@ const Login3 = ({
     setIsLoading(false);
 
     if (result?.error) {
+      toast.error("Invalid credentials. Please try again.");
       setError("Invalid credentials. Please try again.");
     } else {
+      toast.success("Login successful");
       if (remember) {
         localStorage.setItem("rememberedEmail", email);
       } else {
         localStorage.removeItem("rememberedEmail");
       }
-      window.location.href = "/"; // 登录成功后跳转页面
+      router.push("/"); // 登录成功后跳转页面
     }
   };
 
